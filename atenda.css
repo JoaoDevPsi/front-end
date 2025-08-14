@@ -1,0 +1,406 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-color: #0c4c7d;
+    --secondary-color: #f8f9fa;
+    --accent-color: #4CAF50;
+    --text-color: #333;
+    --light-text: #fff;
+    --border-color: #ddd;
+    --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar {
+    background-color: #0c4c7d;
+    padding: 15px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+body.admin-mode .navbar {
+    top: 52px;
+}
+
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.nav-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; 
+}
+
+.nav-item {
+    margin: 0;
+}
+
+.nav-link {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 10px 15px; 
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    white-space: nowrap; 
+}
+
+.nav-link:hover {
+    background-color: #1a6da8;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.nav-link.active {
+    background-color: #1a6da8;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.whatsapp-btn {
+    background-color: #25D366;
+    color: white !important;
+    border-radius: 50px;
+    padding: 10px 22px !important;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+}
+
+.whatsapp-btn:hover {
+    background-color: #128C7E;
+    transform: translateY(-4px);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.4);
+}
+
+.atenda-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    flex: 1;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.title h1 {
+    color: var(--primary-color);
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.benefits-section {
+    background-color: var(--secondary-color);
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+}
+
+.benefits-section h2 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.benefits-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.benefits-list {
+    margin-top: 1rem;
+    list-style: none;
+}
+
+.benefits-list li {
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.benefits-list i {
+    color: var(--accent-color);
+}
+
+
+.form-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.image-section {
+    flex: 1;
+    min-width: 300px;
+}
+
+.clinic-image {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    object-fit: cover;
+    height: 100%;
+    max-height: 500px;
+}
+
+.contact-form {
+    flex: 1;
+    min-width: 300px;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
+.contact-form h2 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+.form-textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.radio-group {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.radio-custom {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    position: relative;
+}
+
+.radio-option input[type="radio"] {
+    display: none;
+}
+
+.radio-option input[type="radio"]:checked + .radio-custom::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 10px;
+    height: 10px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+}
+
+.submit-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #0a3d63;
+}
+
+footer {
+    background-color: #0c4c7d;
+    color: white;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+}
+
+footer > div.max-w-7xl {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 0 auto;
+    max-width: 1280px;
+    gap: 2rem;
+}
+
+footer > div.max-w-7xl > div {
+    flex: 1 1 auto;
+    min-width: 200px;
+    text-align: center;
+}
+
+footer > div.max-w-7xl > div:first-child {
+    text-align: left;
+}
+
+footer > div.max-w-7xl > div:first-child img {
+    height: 3rem;
+    width: auto;
+    max-width: 100%;
+}
+
+@media (min-width: 768px) {
+    footer > div.max.w-7xl > div {
+        text-align: left;
+    }
+    footer > div.max-w-7xl > div:first-child {
+        flex-basis: 25%;
+    }
+    footer > div.max-w-7xl > div:nth-child(2),
+    footer > div.max-w-7xl > div:nth-child(3),
+    footer > div.max-w-7xl > div:nth-child(4) {
+        flex-basis: calc(75% / 3);
+    }
+}
+
+@media (min-width: 1024px) {
+    footer > div.max-w-7xl > div {
+        flex-basis: 25%;
+    }
+}
+
+footer a {
+    color: white;
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: #a0aec0;
+}
+
+footer img {
+    border-radius: 0.375rem;
+}
+
+@media (max-width: 768px) {
+    .nav-list {
+        flex-direction: column;
+        gap: 8px;
+    }
+    .nav-link {
+        padding: 10px 20px;
+        font-size: 1rem;
+        width: calc(100% - 40px);
+    }
+    .whatsapp-btn {
+        padding: 10px 20px !important;
+        font-size: 1rem;
+        width: auto;
+    }
+    body.admin-mode .navbar {
+        top: 52px;
+    }
+
+    .atenda-container {
+        margin: 1.5rem auto;
+        padding: 0 15px;
+    }
+    .title h1 {
+        font-size: 2rem;
+    }
+    .form-container {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-list {
+        gap: 5px;
+    }
+    .nav-link {
+        font-size: 0.85rem;
+        padding: 8px 10px;
+    }
+    .whatsapp-btn {
+        padding: 8px 15px !important;
+        font-size: 0.9rem;
+    }
+    body.admin-mode .navbar {
+        top: 52px;
+    }
+    .atenda-container {
+        margin: 1rem auto;
+        padding: 0 10px;
+    }
+    .title h1 {
+        font-size: 1.8rem;
+    }
+    .benefits-section {
+        padding: 1.5rem;
+    }
+    .contact-form {
+        padding: 1.5rem;
+    }
+}

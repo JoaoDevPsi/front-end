@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Arquê Admin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+        .login-container {
+            width: 380px;
+            padding: 45px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .logo {
+            margin-bottom: 35px;
+            font-size: 2.8em;
+            color: #0c4c7d;
+            font-weight: 700;
+            letter-spacing: -1px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1em;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        input:focus {
+            border-color: #1a6da8;
+            box-shadow: 0 0 0 3px rgba(26, 109, 168, 0.2);
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #0c4c7d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        button:hover {
+            background-color: #1a6da8;
+            transform: translateY(-2px);
+        }
+        .error {
+            color: #dc3545;
+            margin-top: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+        .footer {
+            margin-top: 25px;
+            font-size: 0.8em;
+            color: #888;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">Clínica Arquê Admin</div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Usuário</label>
+                <input type="text" id="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit">Entrar</button>
+            <div id="errorMessage" class="error"></div>
+        </form>
+        <div class="footer">Acesso restrito à equipe administrativa</div>
+    </div>
+    
+    <script src="auth_service.js"></script>
+    <script>
+        document.getElementById('loginForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            
+            const errorMessageElement = document.getElementById('errorMessage');
+            errorMessageElement.textContent = ''; 
+            
+            try {
+                
+                const success = await window.login(username, password); 
+                if (success) {
+                    window.location.href = 'admin.html'; 
+                }
+            } catch (error) {
+                errorMessageElement.textContent = error.message || 'Erro ao tentar fazer login. Tente novamente.';
+                console.error("Erro de login detalhado:", error); 
+            }
+        });
+    </script>
+</body>
+</html>
