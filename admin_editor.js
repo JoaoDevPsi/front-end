@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const API_BASE_URL = 'https://joaodevpsi.pythonanywhere.com/api/    ';
+    const API_BASE_URL = 'https://joaodevpsi.pythonanywhere.com/api/';
     const postForm = document.getElementById('postForm');
     const postIdInput = document.getElementById('postId');
     const postCategory = document.getElementById('postCategory');
