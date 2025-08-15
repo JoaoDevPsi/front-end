@@ -1,7 +1,15 @@
 document.addEventListener('DOMContentLoaded', function() {
-   
+    
     document.getElementById('current-year').textContent = new Date().getFullYear();
     
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navList = document.querySelector('.nav-list');
+
+    if (menuToggle && navList) {
+        menuToggle.addEventListener('click', () => {
+            navList.classList.toggle('active');
+        });
+    }
     
     function alertar() {
         return confirm('Você será redirecionado para um site externo. Deseja continuar?');
