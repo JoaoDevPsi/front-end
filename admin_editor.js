@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const articleExcerptInput = document.getElementById('articleExcerpt');
     const articleContentInput = document.getElementById('articleContent');
     const articleImageUploadInput = document.getElementById('articleImageUpload');
-    const articleImageUrlInput = document = document.getElementById('articleImageUrl');
+    const articleImageUrlInput = document.getElementById('articleImageUrl');
 
     const deleteBtn = document.getElementById('deleteBtn');
     const cancelBtn = document.getElementById('cancelBtn');
@@ -198,12 +198,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (category === 'gallery') {
                 postType.value = post.post_type;
                 if (post.post_type === 'single') {
-                    imageUrlInput.value = post.image_main || '';
+                    imageUrlInput.value = post.image_main_url || '';
                     imageAltInput.value = post.alt_text || '';
                     imageLinkInput.value = post.link || '';
                 } else if (post.post_type === 'carousel') {
                     carouselItems = post.images.map(img => ({
-                        image: img.image,
+                        image: img.image_url,
                         alt_text: img.alt_text,
                         link: (img.link === '#') ? '' : (img.link || '')
                     }));
@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 articleTitleInput.value = post.title;
                 articleExcerptInput.value = post.excerpt;
                 articleContentInput.value = post.content;
-                articleImageUrlInput.value = post.image || '';
+                articleImageUrlInput.value = post.image_url || '';
             }
         } catch (error) {
             console.error('Erro ao carregar post para edição:', error);
@@ -336,7 +336,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (category === 'gallery' && postType.value === 'carousel') {
                 carouselItems = postData.images.map(img => ({
-                    image: img.image,
+                    image: img.image_url,
                     alt_text: img.alt_text,
                     link: img.link,
                     file: null
