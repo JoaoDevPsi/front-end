@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const articleExcerptInput = document.getElementById('articleExcerpt');
     const articleContentInput = document.getElementById('articleContent');
     const articleImageUploadInput = document.getElementById('articleImageUpload');
-    const articleImageUrlInput = document.getElementById('articleImageUrl');
+    const articleImageUrlInput = document = document.getElementById('articleImageUrl');
 
     const deleteBtn = document.getElementById('deleteBtn');
     const cancelBtn = document.getElementById('cancelBtn');
@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     carouselItems = post.images.map(img => ({
                         image: img.image,
                         alt_text: img.alt_text,
-                        link: (img.link === '#') ? '' : (img.link || '') // AQUI: Limpa o link se for '#'
+                        link: (img.link === '#') ? '' : (img.link || '')
                     }));
                     renderCarouselImages();
                 }
@@ -232,13 +232,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData();
 
         if (postIdInput.value) {
-            method = 'PATCH'; 
+            method = 'PATCH';
             apiEndpoint = `${API_BASE_URL}${category === 'gallery' ? 'gallery-posts' : 'articles'}/${postIdInput.value}/`;
         } else {
             method = 'POST';
             apiEndpoint = `${API_BASE_URL}${category === 'gallery' ? 'gallery-posts' : 'articles'}/`;
         }
-        
+
         if (category === 'gallery') {
             const type = postType.value;
             formData.append('post_type', type);
@@ -265,14 +265,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 formData.append('alt_text', imageAltInput.value.trim() || '');
                 formData.append('link', singleImageLink);
 
-            } else { 
+            } else {
                 if (carouselItems.length === 0) {
                     if (method === 'POST') {
                         alert('Adicione pelo menos uma imagem ao carrossel.');
                         return;
                     }
                 }
-                
+
                 const carouselImagesData = [];
                 carouselItems.forEach((item, index) => {
                     if (item.file) {
@@ -330,6 +330,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 alert(errorMessage);
                 return;
+            }
+
+            const postData = await response.json();
+
+            if (category === 'gallery' && postType.value === 'carousel') {
+                carouselItems = postData.images.map(img => ({
+                    image: img.image,
+                    alt_text: img.alt_text,
+                    link: img.link,
+                    file: null
+                }));
+                renderCarouselImages();
             }
 
             alert(`${category === 'gallery' ? 'Post da Galeria' : 'Artigo'} salvo com sucesso no back-end!`);
