@@ -1,4 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navList = document.querySelector('.nav-list');
+
+    if (menuToggle && navList) {
+        menuToggle.addEventListener('click', () => {
+            navList.classList.toggle('active');
+        });
+    }
+
     const lightbox = document.getElementById('lightbox');
     const lightboxImg = document.getElementById('lightbox-img');
     const captionText = document.getElementById('caption');
@@ -25,13 +34,13 @@ document.addEventListener('DOMContentLoaded', function() {
     triggers.forEach((trigger, index) => {
         trigger.addEventListener('click', () => {
             currentIndex = index;
-            lightbox.style.display = 'flex';
+            lightbox.classList.add('active');
             showImage(currentIndex);
         });
     });
 
     closeBtn.addEventListener('click', () => {
-        lightbox.style.display = 'none';
+        lightbox.classList.remove('active');
     });
 
     prevBtn.addEventListener('click', (e) => {
@@ -46,15 +55,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     lightbox.addEventListener('click', (e) => {
         if (e.target === lightbox) {
-            lightbox.style.display = 'none';
+            lightbox.classList.remove('active');
         }
     });
 
     document.addEventListener('keydown', (e) => {
-        if (lightbox.style.display === 'flex') {
+        if (lightbox.classList.contains('active')) {
             if (e.key === 'ArrowLeft') showImage(currentIndex - 1);
             if (e.key === 'ArrowRight') showImage(currentIndex + 1);
-            if (e.key === 'Escape') lightbox.style.display = 'none';
+            if (e.key === 'Escape') lightbox.classList.remove('active');
         }
     });
 

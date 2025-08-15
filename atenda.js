@@ -1,4 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navList = document.querySelector('.nav-list');
+
+    if (menuToggle && navList) {
+        menuToggle.addEventListener('click', () => {
+            navList.classList.toggle('active');
+        });
+    }
+
     const API_CONTACT_URL = `${window.API_BASE_URL}contact/`;
     document.getElementById('current-year').textContent = new Date().getFullYear();
     
@@ -23,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const abordagem = document.getElementById('abordagem').value.trim();
             const contatoPreferencial = document.querySelector('input[name="contato"]:checked').value;
             const turnoPreferencial = document.getElementById('turno').value;
-            const diaPreferencial = document.getElementById('dia').value;  
+            const diaPreferencial = document.getElementById('dia').value; 
             const mensagem = document.getElementById('mensagem').value.trim();
 
             

@@ -1,3 +1,15 @@
+document.addEventListener('DOMContentLoaded', function() {
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navList = document.querySelector('.nav-list');
+
+    if (menuToggle && navList) {
+        menuToggle.addEventListener('click', () => {
+            navList.classList.toggle('active');
+        });
+    }
+
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+});
 
 function alertar() {
     if (!confirm('Você será redirecionado da página, deseja continuar?')) {

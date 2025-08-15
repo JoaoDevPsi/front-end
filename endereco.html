@@ -11,6 +11,11 @@
 <body>
     <nav class="navbar">
         <div class="nav-container">
+            <button class="menu-toggle" aria-label="Abrir menu de navegação">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
             <ul class="nav-list">
                 <li class="nav-item">
                     <a class="nav-link" href="site_arque.html">Início</a>
@@ -61,8 +66,8 @@
 
             <div class="info-card">
                 <h3><i class="fas fa-clock"></i> Horário de Atendimento</h3>
-                    <p>Segunda a Sexta: 8h - 21h</p>
-                    <p>Atendimentos mediante agendamento</p>
+                <p>Segunda a Sexta: 8h - 21h</p>
+                <p>Atendimentos mediante agendamento</p>
             </div>
 
             <div class="info-card">
@@ -103,39 +108,39 @@
         </section>
     </main>
 
- <footer class="bg-gray-800 text-gray-300 py-8 px-4 sm:px-6 lg:px-8 rounded-t-lg shadow-lg">
-    <div class="div max-w-7xl mx-auto">
-        <div>
-            <img src="img/logo.jpg" alt="Logo da Clínica Arquê" class="h-12 mb-4 rounded-md">
-            <p class="text-sm">&copy; <span id="current-year"></span> Clínica Arquê de Psicologia. Todos os direitos reservados.</p>
-            <p class="text-xs mt-1">Sua saúde mental, nossa prioridade.</p>
+    <footer class="bg-gray-800 text-gray-300 py-8 px-4 sm:px-6 lg:px-8 rounded-t-lg shadow-lg">
+        <div class="div max-w-7xl mx-auto">
+            <div>
+                <img src="img/logo.jpg" alt="Logo da Clínica Arquê" class="h-12 mb-4 rounded-md">
+                <p class="text-sm">© <span id="current-year"></span> Clínica Arquê de Psicologia. Todos os direitos reservados.</p>
+                <p class="text-xs mt-1">Sua saúde mental, nossa prioridade.</p>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-semibold text-white mb-3">Contato</h3>
+                <p class="text-sm">Email: <a href="mailto:clinicaarque.psi@gmail.com" class="hover:text-white transition-colors duration-200">clinicaarque.psi@gmail.com</a></p>
+                <p class="text-sm">Telefone: <a href="https://wa.me/5571992394554" target="_blank" class="hover:text-white transition-colors duration-200">+55 (71) 99239-4554</a></p>          </div>
+
+            <div>
+                <h3 class="text-lg font-semibold text-white mb-3">Links Úteis</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="site_arque.html" class="hover:text-white transition-colors duration-200">Início</a></li>
+                    <li><a href="quem_somos.html" class="hover:text-white transition-colors duration-200">Quem somos</a></li>
+                    <li><a href="artigos.html" class="hover:text-white transition-colors duration-200">Artigos</a></li>
+                    <li><a href="plano.html" class="hover:text-white transition-colors duration-200">Plano de Saúde</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-semibold text-white mb-3">Desenvolvido por</h3>
+                <a href="https://github.com/JoaoDevPsi" target="_blank" class="text-blue-400 hover:text-blue-300 transition-colors duration-200 text-sm">João Pedro Carvalho Araújo / github.com/JoaoDevPsi</a>
+            </div>
         </div>
+    </footer>
 
-        <div>
-            <h3 class="text-lg font-semibold text-white mb-3">Contato</h3>
-            <p class="text-sm">Email: <a href="mailto:clinicaarque.psi@gmail.com" class="hover:text-white transition-colors duration-200">clinicaarque.psi@gmail.com</a></p>
-            <p class="text-sm">Telefone: <a href="https://wa.me/5571992394554" target="_blank" class="hover:text-white transition-colors duration-200">+55 (71) 99239-4554</a></p>        </div>
-
-        <div>
-            <h3 class="text-lg font-semibold text-white mb-3">Links Úteis</h3>
-            <ul class="space-y-2 text-sm">
-                <li><a href="site_arque.html" class="hover:text-white transition-colors duration-200">Início</a></li>
-                <li><a href="quem_somos.html" class="hover:text-white transition-colors duration-200">Quem somos</a></li>
-                <li><a href="artigos.html" class="hover:text-white transition-colors duration-200">Artigos</a></li>
-                <li><a href="plano.html" class="hover:text-white transition-colors duration-200">Plano de Saúde</a></li>
-            </ul>
-        </div>
-
-        <div>
-            <h3 class="text-lg font-semibold text-white mb-3">Desenvolvido por</h3>
-            <a href="https://github.com/JoaoDevPsi" target="_blank" class="text-blue-400 hover:text-blue-300 transition-colors duration-200 text-sm">João Pedro Carvalho Araújo / github.com/JoaoDevPsi</a>
-        </div>
-    </div>
-</footer>
-
-<script>
-    document.getElementById('current-year').textContent = new Date().getFullYear();
-</script>
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
 
     <script src="endereco.js"></script> 
     <script>
