@@ -65,13 +65,13 @@ document.addEventListener('DOMContentLoaded', async function() {
                 let postElement;
 
                 if (post.post_type === 'single' && post.image_main) {
-                    const imageUrlToDisplay = post.image_main;
+                    const imageUrlToDisplay = window.getMediaUrl(post.image_main);
                     postElement = document.createElement('div');
                     postElement.className = 'instagram-single';
                     postElement.setAttribute('data-id', post.id);
                     postElement.innerHTML = `
                         <a href="${post.link || '#'}" target="_blank">
-                            <img src="${imageUrlToDisplay || 'placeholder.jpg'}" alt="${post.alt_text || 'Imagem da Galeria'}" loading="lazy">
+                            <img src="${imageUrlToDisplay}" alt="${post.alt_text || 'Imagem da Galeria'}" loading="lazy">
                         </a>
                         ${isAdmin ? `
                             <div class="post-actions">
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                                 ${post.images.map((img, i) => `
                                     <div class="carousel-slide ${i === 0 ? 'active' : ''}">
                                         <a href="${img.link || '#'}" target="_blank">
-                                            <img src="${img.image}" alt="${img.alt_text}" loading="lazy">
+                                            <img src="${window.getMediaUrl(img.image)}" alt="${img.alt_text}" loading="lazy">
                                         </a>
                                     </div>
                                 `).join('')}

@@ -1,4 +1,5 @@
 window.API_BASE_URL = 'https://joaodevpsi.pythonanywhere.com/api/';
+window.BASE_URL = 'https://joaodevpsi.pythonanywhere.com/';
 window.TOKEN_KEY = 'accessToken';
 window.REFRESH_TOKEN_KEY = 'refreshToken';
 window.AUTH_STORAGE_TYPE_KEY = 'authStorageType';
@@ -138,11 +139,16 @@ window.getAuthHeaders = function(isFormData = false) {
         headers['Authorization'] = `Bearer ${token}`;
     }
 
-    // Apenas adiciona o Content-Type se não for FormData.
-    // O navegador se encarrega de definir o cabeçalho Content-Type para FormData.
     if (!isFormData) {
         headers['Content-Type'] = 'application/json'; 
     }
 
     return headers; 
+};
+
+window.getMediaUrl = function(relativePath) {
+    if (!relativePath || relativePath.startsWith('http://') || relativePath.startsWith('https://')) {
+        return relativePath;
+    }
+    return `${window.BASE_URL}media/${relativePath}`;
 };

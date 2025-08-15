@@ -75,7 +75,7 @@ async function generateArticleCards() {
         card.href = `artigos_conteudo.html?id=${artigo.id}`; 
         card.classList.add('artigo-card');
 
-        const imageUrl = artigo.image; 
+        const imageUrl = window.getMediaUrl(artigo.image); 
 
         card.innerHTML = `
             <img src="${imageUrl}" alt="${artigo.title}" class="artigo-card-image">
@@ -164,7 +164,7 @@ async function loadArticleContent() {
 
         document.getElementById('article-title-tab').textContent = `${artigo.title} - Arquê`;
         document.getElementById('article-main-title').textContent = artigo.title;
-        document.getElementById('article-main-image').src = artigo.image;
+        document.getElementById('article-main-image').src = window.getMediaUrl(artigo.image);
         document.getElementById('article-main-image').alt = artigo.title;
         document.getElementById('article-text-content').innerHTML = artigo.content;
 
