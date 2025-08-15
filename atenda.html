@@ -36,10 +36,10 @@
                     <a href="plano.html" class="nav-link">Plano de saúde</a>
                 </li>
                 <li class="nav-item">
-                    <a href="artigos.html" class="nav-link">Artigos</a>
-                </li>
+                    <a href="artigos.html" class="nav-link active">Artigos</a> </li>
                 <li class="nav-item">
-                    <a href="atenda.html" class="nav-link active">Atenda conosco</a> </li>
+                    <a href="atenda.html" class="nav-link">Atenda conosco</a>
+                </li>
                 <li class="nav-item">
                     <a href="https://wa.me/5571992394554" target="_blank" class="nav-link whatsapp-btn">
                         <i class="fab fa-whatsapp"></i> Contato
@@ -80,33 +80,33 @@
                 
                 <div class="form-group">
                     <label for="nomesobrenome">Nome completo:</label>
-                    <input type="text" id="nomesobrenome" class="form-input" required placeholder="Seu nome completo">
+                    <input type="text" id="nomesobrenome" class="form-input" required placeholder="Seu nome completo" autocomplete="name">
                 </div>
                 
                 <div class="form-group">
                     <label for="telefone">Telefone:</label>
-                    <input type="tel" id="telefone" class="form-input" required placeholder="(XX) XXXXX-XXXX">
+                    <input type="tel" id="telefone" class="form-input" required placeholder="(XX) XXXXX-XXXX" autocomplete="tel">
                 </div>
                 
                 <div class="form-group">
-                    <label for="email">Email:</label> <input type="email" id="email" class="form-input" required placeholder="seuemail@exemplo.com">
+                    <label for="email">Email:</label> <input type="email" id="email" class="form-input" required placeholder="seuemail@exemplo.com" autocomplete="email">
                 </div>
 
                 <div class="form-group">
                     <label for="abordagem">Sua abordagem:</label>
-                    <input type="text" id="abordagem" class="form-input" required placeholder="Sua abordagem terapêutica">
+                    <input type="text" id="abordagem" class="form-input" required placeholder="Sua abordagem terapêutica" autocomplete="off">
                 </div>
                 
                 <div class="form-group">
                     <label>Como prefere nosso contato?</label>
                     <div class="radio-group">
-                        <label class="radio-option">
-                            <input type="radio" name="contato" value="telefone" id="radio-telefone">
+                        <label class="radio-option" for="radio-email">
+                            <input type="radio" name="contato" value="email" id="radio-email" autocomplete="off">
                             <span class="radio-custom"></span>
                             E-mail
                         </label>
-                        <label class="radio-option">
-                            <input type="radio" name="contato" value="whatsapp" id="radio-whatsapp" checked>
+                        <label class="radio-option" for="radio-whatsapp">
+                            <input type="radio" name="contato" value="whatsapp" id="radio-whatsapp" checked autocomplete="off">
                             <span class="radio-custom"></span>
                             WhatsApp
                         </label>
@@ -114,14 +114,14 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="turno">Turno preferencial:</label> <select id="turno" class="form-select">
+                    <label for="turno">Turno preferencial:</label> <select id="turno" class="form-select" autocomplete="off">
                         <option value="manha">Manhã</option>
                         <option value="tarde">Tarde</option>
                         <option value="noite">Noite</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="dia">Dia preferencial:</label> <select id="dia" class="form-select">
+                    <label for="dia">Dia preferencial:</label> <select id="dia" class="form-select" autocomplete="off">
                         <option value="segunda">Segunda</option>
                         <option value="terca">Terça</option>
                         <option value="quarta">Quarta</option>
@@ -132,7 +132,7 @@
                 
                 <div class="form-group">
                     <label for="mensagem">Mensagem adicional:</label>
-                    <textarea id="mensagem" class="form-textarea" placeholder="Alguma informação adicional?"></textarea>
+                    <textarea id="mensagem" class="form-textarea" placeholder="Alguma informação adicional?" autocomplete="off"></textarea>
                 </div>
                 
                 <button type="submit" class="submit-btn">Enviar solicitação</button>
