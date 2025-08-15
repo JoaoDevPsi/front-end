@@ -1,4 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
+
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navList = document.querySelector('.nav-list');
+
+    if (menuToggle && navList) {
+        menuToggle.addEventListener('click', () => {
+            navList.classList.toggle('active');
+        });
+    }
+
     const pessoas = [
         {
             nome: 'Ricardo Mattos',
@@ -78,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
             especialidades: ["Psicologia Analítica", "Compulsão Alimentar", "Depressão"],
             crp: '03/18559',
             formacao: ["Graduada pela Escola Bahiana de Medicina e Saúde Pública. </br> pós graduada em psicoterapia Analítica pela Clínica Psiquê."],
-            bio: "Encantada com a profundidade e complexidade do ser humano, vejo na clínica, fundamentada nos conceitos Juguianos, a possibilidade de ajudar pessoas a viverem melhor. </br> Com experiência em compulsões alimentares e depressão, no fazer clínico busco aprofundar para compreender a origem dos sintomas, levando em conta a subjetividade do sujeito, para que seja possível transformar e elaborar o sofrimento. Atendo adolescentes e adultos."
+            bio: "Encantada com a profundidade e complexidade do ser humano, vejo na clínica, fundamentada nos conceitos Juguianos, a possibilidade de ajudar pessoas a viverem melhor. </br> Com experiência em compulsões alimentares e depressão, no fazer clínico busco aprofundar para compreender a origem dos sintomas, levando em conta a subjetividade do sujeito, para que seja possível transformar e elaborar o sofrimento. Atendo adolescentes e adultos."
         },
         {
             nome: 'Mayla Araújo',
