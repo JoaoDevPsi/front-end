@@ -64,8 +64,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             posts.forEach(post => {
                 let postElement;
 
-                if (post.post_type === 'single' && post.image_main) {
-                    const imageUrlToDisplay = window.getMediaUrl(post.image_main);
+                if (post.post_type === 'single' && post.image_main_url) {
+                    const imageUrlToDisplay = post.image_main_url;
                     postElement = document.createElement('div');
                     postElement.className = 'instagram-single';
                     postElement.setAttribute('data-id', post.id);
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                                 ${post.images.map((img, i) => `
                                     <div class="carousel-slide ${i === 0 ? 'active' : ''}">
                                         <a href="${img.link || '#'}" target="_blank">
-                                            <img src="${window.getMediaUrl(img.image)}" alt="${img.alt_text}" loading="lazy">
+                                            <img src="${img.image_url}" alt="${img.alt_text}" loading="lazy">
                                         </a>
                                     </div>
                                 `).join('')}

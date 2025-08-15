@@ -2,7 +2,7 @@ async function getArticlesFromAPI() {
     try {
         const response = await fetch(`${window.API_BASE_URL}articles/`, {
             method: 'GET',
-            headers: window.getAuthHeaders() 
+            headers: window.getAuthHeaders()
         });
 
         if (!response.ok) {
@@ -10,17 +10,17 @@ async function getArticlesFromAPI() {
         }
 
         const data = await response.json();
-        return data.results || []; 
+        return data.results || [];
 
     } catch (error) {
         console.error('Erro ao buscar artigos da API:', error);
-        return []; 
+        return [];
     }
 }
 
 async function generateArticleCards() {
     const artigosGrid = document.querySelector('.artigos-grid');
-    if (!artigosGrid) return; 
+    if (!artigosGrid) return;
 
     let isAdmin = false;
     if (window.isAuthenticated) {
@@ -31,7 +31,7 @@ async function generateArticleCards() {
             isAdmin = false;
         }
     }
-    
+
     if (isAdmin) {
         const adminBar = document.createElement('div');
         adminBar.style.position = 'fixed';
@@ -45,7 +45,7 @@ async function generateArticleCards() {
         adminBar.style.display = 'flex';
         adminBar.style.justifyContent = 'space-between';
         adminBar.style.alignItems = 'center';
-        
+
         adminBar.innerHTML = `
             <span>Modo Admin (${isAdmin ? 'Admin' : 'Usuário'})</span>
             <div>
@@ -62,8 +62,8 @@ async function generateArticleCards() {
     }
 
     const allArtigos = await getArticlesFromAPI();
-    
-    artigosGrid.innerHTML = ''; 
+
+    artigosGrid.innerHTML = '';
 
     if (allArtigos.length === 0) {
         artigosGrid.innerHTML = '<p style="text-align: center; font-size: 1.2em; color: #555;">Nenhum artigo disponível no momento.</p>';
@@ -72,10 +72,10 @@ async function generateArticleCards() {
 
     allArtigos.forEach(artigo => {
         const card = document.createElement('a');
-        card.href = `artigos_conteudo.html?id=${artigo.id}`; 
+        card.href = `artigos_conteudo.html?id=${artigo.id}`;
         card.classList.add('artigo-card');
 
-        const imageUrl = window.getMediaUrl(artigo.image); 
+        const imageUrl = artigo.image_url;
 
         card.innerHTML = `
             <img src="${imageUrl}" alt="${artigo.title}" class="artigo-card-image">
@@ -99,7 +99,7 @@ async function loadArticleContent() {
             isAdmin = false;
         }
     }
-    
+
     if (isAdmin) {
         const adminBar = document.createElement('div');
         adminBar.style.position = 'fixed';
@@ -113,7 +113,7 @@ async function loadArticleContent() {
         adminBar.style.display = 'flex';
         adminBar.style.justifyContent = 'space-between';
         adminBar.style.alignItems = 'center';
-        
+
         adminBar.innerHTML = `
             <span>Modo Admin (${isAdmin ? 'Admin' : 'Usuário'})</span>
             <div>
@@ -134,7 +134,6 @@ async function loadArticleContent() {
         });
     }
 
-
     const params = new URLSearchParams(window.location.search);
     const articleId = params.get('id');
 
@@ -149,7 +148,7 @@ async function loadArticleContent() {
     try {
         const response = await fetch(`${window.API_BASE_URL}articles/${articleId}/`, {
             method: 'GET',
-            headers: window.getAuthHeaders() 
+            headers: window.getAuthHeaders()
         });
 
         if (!response.ok) {
@@ -164,7 +163,7 @@ async function loadArticleContent() {
 
         document.getElementById('article-title-tab').textContent = `${artigo.title} - Arquê`;
         document.getElementById('article-main-title').textContent = artigo.title;
-        document.getElementById('article-main-image').src = window.getMediaUrl(artigo.image);
+        document.getElementById('article-main-image').src = artigo.image_url;
         document.getElementById('article-main-image').alt = artigo.title;
         document.getElementById('article-text-content').innerHTML = artigo.content;
 
