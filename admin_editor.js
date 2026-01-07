@@ -393,3 +393,25 @@ document.addEventListener('DOMContentLoaded', function() {
         return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
     }
 });
+
+async function uploadVideo(event) {
+    event.preventDefault();
+    
+    const fileInput = document.getElementById('videoInput'); // seu <input type="file">
+    const formData = new FormData();
+    formData.append('video_file', fileInput.files[0]);
+    formData.append('titulo', document.getElementById('titulo').value);
+
+    const response = await fetch('https://seu-backend.herokuapp.com/api/upload-video/', {
+        method: 'POST',
+        body: formData,
+        // Não defina Content-Type manual, o navegador fará isso para o FormData
+        headers: {
+            'Authorization': `Token ${localStorage.getItem('token')}` // Se tiver login
+        }
+    });
+
+    if (response.ok) {
+        alert("Vídeo enviado com sucesso!");
+    }
+}
