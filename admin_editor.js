@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const postCategory = document.getElementById('postCategory');
     const gallerySections = document.getElementById('gallerySections');
     const articleSection = document.getElementById('articleSection');
+    const videoSection = document.getElementById('videoSection');
 
     const postType = document.getElementById('postType');
     const singleImageSection = document.getElementById('singleImageSection');
@@ -27,6 +28,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const articleImageUploadInput = document.getElementById('articleImageUpload');
     const articleImageUrlInput = document.getElementById('articleImageUrl');
 
+    const videoTitleInput = document.getElementById('videoTitle');
+    const videoDescriptionInput = document.getElementById('videoDescription');
+    const videoFileUploadInput = document.getElementById('videoFileUpload');
+    const videoStatus = document.getElementById('videoStatus');
+    const btnSalvarVideo = document.getElementById('btnSalvarVideo');
+
     const deleteBtn = document.getElementById('deleteBtn');
     const cancelBtn = document.getElementById('cancelBtn');
 
@@ -43,6 +50,10 @@ document.addEventListener('DOMContentLoaded', function() {
     postForm.addEventListener('submit', savePost);
     deleteBtn.addEventListener('click', deleteCurrentPost);
     cancelBtn.addEventListener('click', () => window.location.href = 'admin.html');
+
+    if (btnSalvarVideo) {
+        btnSalvarVideo.addEventListener('click', fazerUploadVideo);
+    }
 
     singleImageUploadInput.addEventListener('change', (event) => readImageFileForPreview(event, imageUrlInput));
     newImageUploadInput.addEventListener('change', (event) => readImageFileForPreview(event, newImageUrlInput));
@@ -74,6 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const category = postCategory.value;
         gallerySections.style.display = category === 'gallery' ? 'block' : 'none';
         articleSection.style.display = category === 'article' ? 'block' : 'none';
+        if (videoSection) videoSection.style.display = category === 'video' ? 'block' : 'none';
 
         const allRequiredFields = document.querySelectorAll('#postForm [required]');
         allRequiredFields.forEach(el => {
@@ -101,10 +113,6 @@ document.addEventListener('DOMContentLoaded', function() {
         Array.from(carouselSection.querySelectorAll('[required]')).forEach(el => {
             el.removeAttribute('required');
         });
-
-        if (type === 'single' && postCategory.value === 'gallery') {
-        } else if (type === 'carousel' && postCategory.value === 'gallery') {
-        }
     }
 
     function addCarouselImage() {
@@ -225,8 +233,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function savePost(e) {
         e.preventDefault();
-
         const category = postCategory.value;
+        if (category === 'video') return; 
+
         let apiEndpoint;
         let method;
         const formData = new FormData();
@@ -254,23 +263,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else if (method === 'PATCH') {
                     formData.append('image_main', '');
                 } else {
-                    alert('Para Imagem Única, você deve fazer upload de uma imagem ou fornecer uma URL.');
+                    alert('Forneça uma imagem ou URL.');
                     return;
                 }
 
-                let singleImageLink = imageLinkInput.value.trim();
-                if (singleImageLink === '#') {
-                    singleImageLink = '';
-                }
                 formData.append('alt_text', imageAltInput.value.trim() || '');
-                formData.append('link', singleImageLink);
+                formData.append('link', imageLinkInput.value.trim() === '#' ? '' : imageLinkInput.value.trim());
 
             } else {
-                if (carouselItems.length === 0) {
-                    if (method === 'POST') {
-                        alert('Adicione pelo menos uma imagem ao carrossel.');
-                        return;
-                    }
+                if (carouselItems.length === 0 && method === 'POST') {
+                    alert('Adicione pelo menos uma imagem ao carrossel.');
+                    return;
                 }
 
                 const carouselImagesData = [];
@@ -287,7 +290,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 formData.append('images_meta', JSON.stringify(carouselImagesData));
             }
-        } else {
+        } else if (category === 'article') {
             const imageFile = articleImageUploadInput.files[0];
             const imageUrl = articleImageUrlInput.value.trim();
 
@@ -295,16 +298,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 formData.append('image', imageFile);
             } else if (imageUrl) {
                 formData.append('image', imageUrl);
-            } else if (method === 'PATCH') {
-                formData.append('image', '');
-            } else {
-                alert('Para Artigos, você deve fazer upload de uma imagem ou fornecer uma URL.');
-                return;
-            }
-
-            if (!articleTitleInput.value.trim() || !articleExcerptInput.value.trim() || !articleContentInput.value.trim()) {
-                alert('Título, Resumo e Conteúdo do artigo são obrigatórios.');
-                return;
             }
 
             formData.append('title', articleTitleInput.value.trim());
@@ -321,48 +314,60 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                console.error('Erro da API:', errorData);
-                let errorMessage = `Erro ao salvar: ${response.status} ${response.statusText}`;
-                if (errorData.detail) errorMessage += ` - ${errorData.detail}`;
-                if (errorData.image_main && errorData.image_main[0]) errorMessage += ` - Imagem Principal: ${errorData.image_main[0]}`;
-                if (errorData.images && errorData.images[0]) errorMessage += ` - Imagens carrossel: ${JSON.stringify(errorData.images)}`;
-                if (errorData.images_meta && errorData.images_meta[0]) errorMessage += ` - Metadados de Imagens: ${JSON.stringify(errorData.images_meta)}`;
-
-                alert(errorMessage);
+                alert(`Erro ao salvar: ${JSON.stringify(errorData)}`);
                 return;
             }
 
-            const postData = await response.json();
-
-            if (category === 'gallery' && postType.value === 'carousel') {
-                carouselItems = postData.images.map(img => ({
-                    image: img.image_url,
-                    alt_text: img.alt_text,
-                    link: img.link,
-                    file: null
-                }));
-                renderCarouselImages();
-            }
-
-            alert(`${category === 'gallery' ? 'Post da Galeria' : 'Artigo'} salvo com sucesso no back-end!`);
+            alert('Salvo com sucesso!');
             window.location.href = 'admin.html';
         } catch (error) {
-            console.error('Erro na requisição Fetch:', error);
-            alert(`Erro na comunicação: ${error.message}. Verifique sua conexão ou o console.`);
+            console.error('Erro:', error);
+            alert('Erro na comunicação.');
+        }
+    }
+
+    async function fazerUploadVideo() {
+        const titulo = videoTitleInput.value;
+        const descricao = videoDescriptionInput.value;
+        const videoFile = videoFileUploadInput.files[0];
+
+        if (!videoFile) {
+            videoStatus.innerHTML = '<p style="color: orange">Selecione um vídeo.</p>';
+            return;
+        }
+
+        videoStatus.innerHTML = '<p style="color: blue">Enviando vídeo...</p>';
+
+        const formData = new FormData();
+        formData.append('titulo', titulo);
+        formData.append('descricao', descricao);
+        formData.append('video_file', videoFile);
+
+        try {
+            const response = await fetch(`${API_BASE_URL}upload-video/`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            const resultado = await response.json();
+
+            if (response.ok) {
+                videoStatus.innerHTML = `<p style="color: green">✅ Sucesso! <a href="${resultado.url}" target="_blank">Ver vídeo</a></p>`;
+                videoTitleInput.value = '';
+                videoDescriptionInput.value = '';
+                videoFileUploadInput.value = '';
+            } else {
+                videoStatus.innerHTML = `<p style="color: red">❌ Erro: ${resultado.message || 'Falha'}</p>`;
+            }
+        } catch (erro) {
+            videoStatus.innerHTML = `<p style="color: red">❌ Falha na conexão.</p>`;
         }
     }
 
     async function deleteCurrentPost() {
-        if (!currentPost || !confirm('Tem certeza que deseja excluir este post permanentemente do servidor?')) {
-            return;
-        }
+        if (!currentPost || !confirm('Excluir permanentemente?')) return;
 
-        let apiEndpoint;
-        if (currentPost.post_type === 'article' || currentPost.type === 'article') {
-            apiEndpoint = `${API_BASE_URL}articles/${currentPost.id}/`;
-        } else {
-            apiEndpoint = `${API_BASE_URL}gallery-posts/${currentPost.id}/`;
-        }
+        let apiEndpoint = `${API_BASE_URL}${currentPost.title ? 'articles' : 'gallery-posts'}/${currentPost.id}/`;
 
         try {
             const response = await fetch(apiEndpoint, {
@@ -370,48 +375,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: window.getAuthHeaders(),
             });
 
-            if (!response.ok) {
-                if (response.status === 401 || response.status === 403) {
-                    alert('Não autorizado a excluir o post. Faça login novamente.');
-                    window.logout();
-                } else if (response.status === 404) {
-                    alert('Post não encontrado no servidor.');
-                } else {
-                    throw new Error(`Erro ao excluir post: ${response.status} ${response.statusText}`);
-                }
+            if (response.ok) {
+                alert('Excluído!');
+                window.location.href = 'admin.html';
             }
-
-            alert('Post excluído com sucesso do back-end!');
-            window.location.href = 'admin.html';
         } catch (error) {
-            console.error('Erro na requisição DELETE:', error);
-            alert(`Erro ao excluir: ${error.message}`);
+            alert('Erro ao excluir.');
         }
-    }
-
-    function generateId() {
-        return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
     }
 });
-
-async function uploadVideo(event) {
-    event.preventDefault();
-    
-    const fileInput = document.getElementById('videoInput'); // seu <input type="file">
-    const formData = new FormData();
-    formData.append('video_file', fileInput.files[0]);
-    formData.append('titulo', document.getElementById('titulo').value);
-
-    const response = await fetch('https://seu-backend.herokuapp.com/api/upload-video/', {
-        method: 'POST',
-        body: formData,
-        // Não defina Content-Type manual, o navegador fará isso para o FormData
-        headers: {
-            'Authorization': `Token ${localStorage.getItem('token')}` // Se tiver login
-        }
-    });
-
-    if (response.ok) {
-        alert("Vídeo enviado com sucesso!");
-    }
-}
