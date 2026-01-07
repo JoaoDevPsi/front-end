@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         card.querySelector('.card-btn').addEventListener('click', (e) => {
             e.stopPropagation();
-            window.open(`https://wa.me/${person.contato}?text=Olá ${person.nome}, gostaria de agendar uma consulta`, '_blank');
+            window.open(`https://wa.me/${person.contato}?text=Olá, gostaria de agendar uma consulta com ${person.nome}`, '_blank');
         });
         
         card.addEventListener('click', () => {
