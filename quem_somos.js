@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         currentModal.querySelector('.botao-contato').textContent = `Agendar com ${person.nome}`;
         currentModal.querySelector('.botao-contato').onclick = () => {
-             window.open(`https://wa.me/${person.contato}?text=Olá ${person.nome}, gostaria de agendar uma consulta`, '_blank');
+             window.open(`https://wa.me/${person.contato}?text=Olá, gostaria de agendar uma consulta com ${person.nome}`, '_blank');
         };
     }
 
