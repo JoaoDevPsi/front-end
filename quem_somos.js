@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
         {
             nome: 'Ricardo Mattos',
             curriculo: ["Psicólogo", "Pós-graduado em Psicologia Analitica"],
-            contato: "5571992394554",
+            contato: "5571920004468",
             imagem: "img/ric3.jpg",
             especialidades: ["Psicologia Analítica","Ansiedade", "Depressão"],
             crp: "27/21157",
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
         {
             nome: 'Fernando Lopes',
             curriculo: ["Psicologo", "Pós-graduado"],
-            contato: "5571992394554",
+            contato: "5571920004468",
             imagem: "img/nando3.jpg",
             especialidades: ["Psicoterapia Analítica", "Morte e morrer", "Suicidio"],
             crp:'03/18814',
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
         {
             nome: 'Fernanda Romano',
             curriculo: ["Psicologa", "Pós-graduanda"],
-            contato: "5571992394554",
+            contato: "5571920004468",
             imagem: "img/nadna3.jpg",
             especialidades: ["Psicoterapia Analítica","Gênero", "Feminino"],
             crp:'03/26711',
@@ -43,47 +43,47 @@ document.addEventListener('DOMContentLoaded', function() {
         {
             nome: 'João Araújo',
             curriculo: ["Psicólogo", "Pós-graduando"],
-            contato: "5571992394554",
+            contato: "5571920004468",
             imagem: "img/joao5.jpg",
             especialidades: ["Crise Suicida", "Orientação Profissional", "Atendimento a crianças"],
             crp: '03/27523',
             formacao: ["Graduação em Psicologia - EBMSP", "Pós-graduação em Andamento - Psicoterapia Analítica"],
             bio: "Atuação voltada ao (re)conhecimento de si, cuidados com desejos de morte. Praticamente e aplicante de Mindfullness, em momentos de crises e no cotidiano. Atendimento e cuidados a crianças e adolescentes. Estuda genêros, ideação suicida, mitos e o lúdico na clínica. Realiza orientação de vida e carreira."
         },
-        {
-            nome: 'Alana Pitanga',
-            curriculo: ["Psicóloga", "Pós-graduada"],
-            contato: "5571992394554",
-            imagem: "img/Alana.jpg",
-            especialidades: ["Psicologia Analítica", "Neuropsicologia"],
-            crp:'03/16003',
-            formacao: ["Graduação em Psicologia - UNIFACS", "Especialização em Psicologia Hospitalar"],
-            bio: "Atuo como psicóloga através da abordagem analítica de Carl G. Jung. Participei de grupos de estudo e pesquisa acerca da pós-modernidade, sendo meu maior foco, assim como respiração e meditação.</br>Acredito que o trabalho é um ato de amor próprio, de dividir e se dar conta junto com o outro. Não repreender a vida, mas lidar com ela e encontrar ferramentas dentro dela (e de si), é um instrumento vital para caminhar em qualquer direção."
-        },
+        // {
+        //     nome: 'Alana Pitanga',
+        //     curriculo: ["Psicóloga", "Pós-graduada"],
+        //     contato: "557192000-4468",
+        //     imagem: "img/Alana.jpg",
+        //     especialidades: ["Psicologia Analítica", "Neuropsicologia"],
+        //     crp:'03/16003',
+        //     formacao: ["Graduação em Psicologia - UNIFACS", "Especialização em Psicologia Hospitalar"],
+        //     bio: "Atuo como psicóloga através da abordagem analítica de Carl G. Jung. Participei de grupos de estudo e pesquisa acerca da pós-modernidade, sendo meu maior foco, assim como respiração e meditação.</br>Acredito que o trabalho é um ato de amor próprio, de dividir e se dar conta junto com o outro. Não repreender a vida, mas lidar com ela e encontrar ferramentas dentro dela (e de si), é um instrumento vital para caminhar em qualquer direção."
+        // },
         {
             nome: 'Julia Péret',
             curriculo: ["Psicóloga", "Pós-graduada"],
-            contato: "5571992394554",
+            contato: "5571920004468",
             imagem: "img/juliaP.jpg",
             especialidades: ["Arteterapia", "LGBTQIAP+"],
             crp: '03/21052 ',
             formacao: ["Possui graduação em Psicologia pela Escola Bahiana de Medicina e Saúde Pública. </br> Especialização em Arteterapia Junguiana pelo Instituto Junguiano da Bahia. </br> Mestra pelo Programa Multidisciplinar de Pós-Graduação em Cultura e Sociedade da Universidade Federal da Bahia (UFBA)."],
             bio: "Pesquisa no campo psicológico dos Complexos Culturais, se debruçando sobre o sofrimento psíquico gerado pelo machismo, racismo e LGBTfobias estruturais. É integrante do Núcleo de Pesquisa e Extensão em Culturas, Gêneros e Sexualidades (NuCuS) e tem experiência na área de Psicologia Clínica, com ênfase em Saúde Mental, trabalhando com a abordagem Junguiana. "
         },
-        {
-            nome: 'Louise Rosado',
-            curriculo: ["Psicóloga", "Pós-graduada"],
-            contato: "5571992394554",
-            imagem: "img/Louise.jpg",
-            especialidades: ["Psicologia Analítica", "Saúde Mental"],
-            crp:'03/21339',
-            formacao: ["Psicóloga formada pela Escola Bahiana de Medicina e Saúde Pública. </br> Pós Graduação em Psicoterapia Analítica pelo Instituto Junguiano da Bahia."],
-            bio: "Possui experiência em Saúde Mental e Psicologia Clínica."
-        },
+        // {
+        //     nome: 'Louise Rosado',
+        //     curriculo: ["Psicóloga", "Pós-graduada"],
+        //     contato: "55 71 92000-4468",
+        //     imagem: "img/Louise.jpg",
+        //     especialidades: ["Psicologia Analítica", "Saúde Mental"],
+        //     crp:'03/21339',
+        //     formacao: ["Psicóloga formada pela Escola Bahiana de Medicina e Saúde Pública. </br> Pós Graduação em Psicoterapia Analítica pelo Instituto Junguiano da Bahia."],
+        //     bio: "Possui experiência em Saúde Mental e Psicologia Clínica."
+        // },
         {
             nome: 'Julia Kammuller',
             curriculo: ["Psicóloga", "Pós-graduada"],
-            contato: "5571992394554",
+            contato: "5571920004468",
             imagem: "img/JuliaK.jpg",
             especialidades: ["Psicologia Analítica", "Compulsão Alimentar", "Depressão"],
             crp: '03/18559',
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
         {
             nome: 'Mayla Araújo',
             curriculo: ["Psicóloga", "Pós-graduada"],
-            contato: "5571992394554",
+            contato: "5571920004468",
             imagem: "img/Mayla.jpg",
             especialidades: ["Psicologia Analítica", "Preparação Mental"],
             crp: '03/21052',
