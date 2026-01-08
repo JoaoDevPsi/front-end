@@ -52,14 +52,14 @@ document.addEventListener('DOMContentLoaded', async function() {
         try {
             const [resGallery, resVideos] = await Promise.all([
                 fetch(`${window.API_BASE_URL}gallery-posts/`, { headers: window.getAuthHeaders() }),
-                fetch(`${window.API_BASE_URL}upload-video/`, { headers: window.getAuthHeaders() })
+                fetch(`${window.API_BASE_URL}upload-video/`, { method: 'GET', headers: window.getAuthHeaders() })
             ]);
 
-            const galleryData = await resGallery.json();
-            const videosData = await resVideos.json();
+            const galleryData = resGallery.ok ? await resGallery.json() : { results: [] };
+            const videosData = resVideos.ok ? await resVideos.json() : [];
 
             const posts = galleryData.results || galleryData;
-            const videos = videosData.results || videosData;
+            const videos = Array.isArray(videosData) ? videosData : (videosData.results || []);
 
             galleryContainer.innerHTML = '';
 
@@ -172,7 +172,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
-    // Lógica do Lightbox para Fotos da Clínica
     const allImages = Array.from(document.querySelectorAll('.photos-container img'));
     if (allImages.length > 0) {
         let currentImgIdx = 0;
