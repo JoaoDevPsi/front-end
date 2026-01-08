@@ -70,10 +70,11 @@ document.addEventListener('DOMContentLoaded', async function() {
             videos.forEach(video => {
                 const videoElement = document.createElement('div');
                 videoElement.className = 'instagram-single video-wrapper';
-                const secureVideoUrl = video.video_file.replace("http://", "https://") + "?t=" + new Date().getTime();
+                
                 videoElement.innerHTML = `
-                    <video controls playsinline preload="auto" crossorigin="anonymous" class="gallery-video-item" style="width:100%; height:100%; object-fit:cover; background:#000;">
-                        <source src="${secureVideoUrl}" type="video/mp4">
+                    <video controls playsinline preload="metadata" crossorigin="anonymous" class="gallery-video-item" style="width:100%; height:100%; object-fit:cover; background:#000;">
+                        <source src="${video.video_file}" type="video/mp4">
+                        Seu navegador não suporta vídeos.
                     </video>
                     <div class="video-title-tag">${video.titulo}</div>
                 `;
