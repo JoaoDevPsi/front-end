@@ -33,6 +33,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const videoFileUploadInput = document.getElementById('videoFileUpload');
     const videoStatus = document.getElementById('videoStatus');
     const btnSalvarVideo = document.getElementById('btnSalvarVideo');
+    const progressBar = document.getElementById('uploadProgressBar');
+    const progressContainer = document.getElementById('uploadProgressContainer');
 
     const deleteBtn = document.getElementById('deleteBtn');
     const cancelBtn = document.getElementById('cancelBtn');
@@ -49,28 +51,26 @@ document.addEventListener('DOMContentLoaded', function() {
     addImageBtn.addEventListener('click', addCarouselImage);
     postForm.addEventListener('submit', savePost);
     deleteBtn.addEventListener('click', deleteCurrentPost);
-    cancelBtn.addEventListener('click', () => window.location.href = 'admin.html');
+    cancelBtn.addEventListener('click', () => window.location.href = 'site_arque.html');
 
     if (btnSalvarVideo) {
         btnSalvarVideo.addEventListener('click', fazerUploadVideo);
     }
-
-    singleImageUploadInput.addEventListener('change', (event) => readImageFileForPreview(event, imageUrlInput));
-    newImageUploadInput.addEventListener('change', (event) => readImageFileForPreview(event, newImageUrlInput));
-    articleImageUploadInput.addEventListener('change', (event) => readImageFileForPreview(event, articleImageUrlInput));
 
     function readImageFileForPreview(event, urlInputTarget) {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                urlInputTarget.value = '';
+                urlInputTarget.value = ''; 
             };
             reader.readAsDataURL(file);
-        } else {
-            urlInputTarget.value = '';
         }
     }
+
+    singleImageUploadInput.addEventListener('change', (e) => readImageFileForPreview(e, imageUrlInput));
+    newImageUploadInput.addEventListener('change', (e) => readImageFileForPreview(e, newImageUrlInput));
+    articleImageUploadInput.addEventListener('change', (e) => readImageFileForPreview(e, articleImageUrlInput));
 
     if (editPostId && editPostCategory) {
         loadPostForEditing(editPostId, editPostCategory);
@@ -85,12 +85,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const category = postCategory.value;
         gallerySections.style.display = category === 'gallery' ? 'block' : 'none';
         articleSection.style.display = category === 'article' ? 'block' : 'none';
-        if (videoSection) videoSection.style.display = category === 'video' ? 'block' : 'none';
+        videoSection.style.display = category === 'video' ? 'block' : 'none';
 
-        const allRequiredFields = document.querySelectorAll('#postForm [required]');
-        allRequiredFields.forEach(el => {
-            el.removeAttribute('required');
-        });
+        const allRequired = document.querySelectorAll('#postForm [required]');
+        allRequired.forEach(el => el.removeAttribute('required'));
 
         if (category === 'gallery') {
             postType.setAttribute('required', 'required');
@@ -106,13 +104,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const type = postType.value;
         singleImageSection.style.display = type === 'single' ? 'block' : 'none';
         carouselSection.style.display = type === 'carousel' ? 'block' : 'none';
-
-        Array.from(singleImageSection.querySelectorAll('[required]')).forEach(el => {
-            el.removeAttribute('required');
-        });
-        Array.from(carouselSection.querySelectorAll('[required]')).forEach(el => {
-            el.removeAttribute('required');
-        });
     }
 
     function addCarouselImage() {
@@ -125,26 +116,18 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (newImageUrlInput.value.trim()) {
             imageUrlSource = newImageUrlInput.value.trim();
         } else {
-            alert('URL ou upload da imagem é obrigatória para carrossel.');
+            alert('URL ou upload da imagem é obrigatória.');
             return;
         }
 
-        const alt = newImageAltInput.value.trim();
-        let link = newImageLinkInput.value.trim();
-        if (link === '#') {
-            link = '';
-        }
-
-        const newImage = {
+        carouselItems.push({
             image: imageUrlSource,
             file: imageFile,
-            alt_text: alt || 'Imagem do carrossel',
-            link: link
-        };
+            alt_text: newImageAltInput.value.trim() || 'Imagem do carrossel',
+            link: newImageLinkInput.value.trim() === '#' ? '' : newImageLinkInput.value.trim()
+        });
 
-        carouselItems.push(newImage);
         renderCarouselImages();
-
         newImageUrlInput.value = '';
         newImageAltInput.value = '';
         newImageLinkInput.value = '';
@@ -155,19 +138,18 @@ document.addEventListener('DOMContentLoaded', function() {
         carouselImages.innerHTML = '';
         carouselItems.forEach((item, index) => {
             const imgSrc = item.file ? URL.createObjectURL(item.file) : item.image;
-            const imageDiv = document.createElement('div');
-            imageDiv.className = 'image-preview';
-            imageDiv.innerHTML = `
-                <img src="${imgSrc}" alt="${item.alt_text}">
-                <button class="remove-image" data-index="${index}">×</button>
+            const div = document.createElement('div');
+            div.className = 'image-preview';
+            div.innerHTML = `
+                <img src="${imgSrc}" style="max-width:100px; border-radius:4px;">
+                <button type="button" class="remove-image" data-index="${index}" style="background:red; color:white; border-radius:50%; border:none; cursor:pointer;">×</button>
             `;
-            carouselImages.appendChild(imageDiv);
+            carouselImages.appendChild(div);
         });
 
         document.querySelectorAll('.remove-image').forEach(btn => {
             btn.addEventListener('click', function() {
-                const index = parseInt(this.getAttribute('data-index'));
-                carouselItems.splice(index, 1);
+                carouselItems.splice(parseInt(this.dataset.index), 1);
                 renderCarouselImages();
             });
         });
@@ -176,29 +158,10 @@ document.addEventListener('DOMContentLoaded', function() {
     async function loadPostForEditing(postId, category) {
         postCategory.value = category;
         togglePostCategory();
-
-        let apiEndpoint;
-        if (category === 'gallery') {
-            apiEndpoint = `${API_BASE_URL}gallery-posts/${postId}/`;
-        } else if (category === 'article') {
-            apiEndpoint = `${API_BASE_URL}articles/${postId}/`;
-        }
+        let endpoint = `${API_BASE_URL}${category === 'gallery' ? 'gallery-posts' : 'articles'}/${postId}/`;
 
         try {
-            const response = await fetch(apiEndpoint, {
-                method: 'GET',
-                headers: window.getAuthHeaders()
-            });
-            if (!response.ok) {
-                if (response.status === 404) {
-                    alert('Post não encontrado no servidor.');
-                } else if (response.status === 401 || response.status === 403) {
-                    alert('Não autorizado a carregar o post. Faça login novamente.');
-                    window.location.href = 'login.html';
-                } else {
-                    throw new Error(`Erro ao carregar post: ${response.statusText}`);
-                }
-            }
+            const response = await fetch(endpoint, { headers: window.getAuthHeaders() });
             const post = await response.json();
             currentPost = post;
             postIdInput.value = post.id;
@@ -209,178 +172,109 @@ document.addEventListener('DOMContentLoaded', function() {
                     imageUrlInput.value = post.image_main_url || '';
                     imageAltInput.value = post.alt_text || '';
                     imageLinkInput.value = post.link || '';
-                } else if (post.post_type === 'carousel') {
+                } else {
                     carouselItems = post.images.map(img => ({
                         image: img.image_url,
                         alt_text: img.alt_text,
-                        link: (img.link === '#') ? '' : (img.link || '')
+                        link: img.link === '#' ? '' : img.link
                     }));
                     renderCarouselImages();
                 }
                 togglePostType();
-            } else if (category === 'article') {
+            } else {
                 articleTitleInput.value = post.title;
                 articleExcerptInput.value = post.excerpt;
                 articleContentInput.value = post.content;
                 articleImageUrlInput.value = post.image_url || '';
             }
         } catch (error) {
-            console.error('Erro ao carregar post para edição:', error);
-            alert('Erro ao carregar post para edição. Verifique o console.');
-            window.location.href = 'admin.html';
+            console.error('Erro ao carregar post:', error);
+        }
+    }
+
+    async function fazerUploadVideo() {
+        const file = videoFileUploadInput.files[0];
+        const titulo = videoTitleInput.value;
+        if (!file || !titulo) return alert('Título e arquivo são obrigatórios.');
+
+        btnSalvarVideo.disabled = true;
+        progressContainer.style.display = 'block';
+        progressBar.style.width = '50%';
+        videoStatus.innerText = 'Enviando...';
+
+        const fd = new FormData();
+        fd.append('titulo', titulo);
+        fd.append('video_file', file);
+
+        try {
+            const res = await fetch(`${API_BASE_URL}upload-video/`, { method: 'POST', body: fd });
+            if (res.ok) {
+                progressBar.style.width = '100%';
+                videoStatus.innerText = 'Sucesso!';
+                setTimeout(() => window.location.href = 'galeria.html', 1500);
+            } else { throw new Error(); }
+        } catch (e) {
+            videoStatus.innerText = 'Erro no upload.';
+            btnSalvarVideo.disabled = false;
         }
     }
 
     async function savePost(e) {
         e.preventDefault();
         const category = postCategory.value;
-        if (category === 'video') return; 
+        if (category === 'video') return;
 
-        let apiEndpoint;
-        let method;
         const formData = new FormData();
-
-        if (postIdInput.value) {
-            method = 'PATCH';
-            apiEndpoint = `${API_BASE_URL}${category === 'gallery' ? 'gallery-posts' : 'articles'}/${postIdInput.value}/`;
-        } else {
-            method = 'POST';
-            apiEndpoint = `${API_BASE_URL}${category === 'gallery' ? 'gallery-posts' : 'articles'}/`;
-        }
+        let method = postIdInput.value ? 'PATCH' : 'POST';
+        let endpoint = `${API_BASE_URL}${category === 'gallery' ? 'gallery-posts' : 'articles'}/`;
+        if(postIdInput.value) endpoint += `${postIdInput.value}/`;
 
         if (category === 'gallery') {
-            const type = postType.value;
-            formData.append('post_type', type);
-
-            if (type === 'single') {
-                const imageFile = singleImageUploadInput.files[0];
-                const imageUrl = imageUrlInput.value.trim();
-
-                if (imageFile) {
-                    formData.append('image_main', imageFile);
-                } else if (imageUrl) {
-                    formData.append('image_main', imageUrl);
-                } else if (method === 'PATCH') {
-                    formData.append('image_main', '');
-                } else {
-                    alert('Forneça uma imagem ou URL.');
-                    return;
-                }
-
-                formData.append('alt_text', imageAltInput.value.trim() || '');
-                formData.append('link', imageLinkInput.value.trim() === '#' ? '' : imageLinkInput.value.trim());
-
+            formData.append('post_type', postType.value);
+            if (postType.value === 'single') {
+                if (singleImageUploadInput.files[0]) formData.append('image_main', singleImageUploadInput.files[0]);
+                else formData.append('image_main', imageUrlInput.value);
+                formData.append('alt_text', imageAltInput.value);
+                formData.append('link', imageLinkInput.value);
             } else {
-                if (carouselItems.length === 0 && method === 'POST') {
-                    alert('Adicione pelo menos uma imagem ao carrossel.');
-                    return;
-                }
-
-                const carouselImagesData = [];
-                carouselItems.forEach((item, index) => {
-                    if (item.file) {
-                        formData.append(`images_files[${index}]`, item.file);
-                    }
-                    carouselImagesData.push({
-                        image: item.image,
-                        alt_text: item.alt_text,
-                        link: item.link,
-                        order: index,
-                    });
+                const meta = carouselItems.map((item, idx) => {
+                    if (item.file) formData.append(`images_files[${idx}]`, item.file);
+                    return { image: item.image, alt_text: item.alt_text, link: item.link, order: idx };
                 });
-                formData.append('images_meta', JSON.stringify(carouselImagesData));
+                formData.append('images_meta', JSON.stringify(meta));
             }
-        } else if (category === 'article') {
-            const imageFile = articleImageUploadInput.files[0];
-            const imageUrl = articleImageUrlInput.value.trim();
-
-            if (imageFile) {
-                formData.append('image', imageFile);
-            } else if (imageUrl) {
-                formData.append('image', imageUrl);
-            }
-
-            formData.append('title', articleTitleInput.value.trim());
-            formData.append('excerpt', articleExcerptInput.value.trim());
-            formData.append('content', articleContentInput.value.trim());
+        } else {
+            formData.append('title', articleTitleInput.value);
+            formData.append('excerpt', articleExcerptInput.value);
+            formData.append('content', articleContentInput.value);
+            if (articleImageUploadInput.files[0]) formData.append('image', articleImageUploadInput.files[0]);
+            else formData.append('image', articleImageUrlInput.value);
         }
 
         try {
-            const response = await fetch(apiEndpoint, {
+            const res = await fetch(endpoint, {
                 method: method,
                 headers: window.getAuthHeaders(true),
-                body: formData,
+                body: formData
             });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                alert(`Erro ao salvar: ${JSON.stringify(errorData)}`);
-                return;
-            }
-
-            alert('Salvo com sucesso!');
-            window.location.href = 'admin.html';
-        } catch (error) {
-            console.error('Erro:', error);
-            alert('Erro na comunicação.');
-        }
-    }
-
-    async function fazerUploadVideo() {
-        const titulo = videoTitleInput.value;
-        const descricao = videoDescriptionInput.value;
-        const videoFile = videoFileUploadInput.files[0];
-
-        if (!videoFile) {
-            videoStatus.innerHTML = '<p style="color: orange">Selecione um vídeo.</p>';
-            return;
-        }
-
-        videoStatus.innerHTML = '<p style="color: blue">Enviando vídeo...</p>';
-
-        const formData = new FormData();
-        formData.append('titulo', titulo);
-        formData.append('descricao', descricao);
-        formData.append('video_file', videoFile);
-
-        try {
-            const response = await fetch(`${API_BASE_URL}upload-video/`, {
-                method: 'POST',
-                body: formData,
-            });
-
-            const resultado = await response.json();
-
-            if (response.ok) {
-                videoStatus.innerHTML = `<p style="color: green">✅ Sucesso! <a href="${resultado.url}" target="_blank">Ver vídeo</a></p>`;
-                videoTitleInput.value = '';
-                videoDescriptionInput.value = '';
-                videoFileUploadInput.value = '';
+            if (res.ok) {
+                alert('Salvo com sucesso!');
+                window.location.href = 'site_arque.html';
             } else {
-                videoStatus.innerHTML = `<p style="color: red">❌ Erro: ${resultado.message || 'Falha'}</p>`;
+                const err = await res.json();
+                alert('Erro: ' + JSON.stringify(err));
             }
-        } catch (erro) {
-            videoStatus.innerHTML = `<p style="color: red">❌ Falha na conexão.</p>`;
+        } catch (error) {
+            console.error(error);
         }
     }
 
     async function deleteCurrentPost() {
-        if (!currentPost || !confirm('Excluir permanentemente?')) return;
-
-        let apiEndpoint = `${API_BASE_URL}${currentPost.title ? 'articles' : 'gallery-posts'}/${currentPost.id}/`;
-
+        if (!confirm('Excluir permanentemente?')) return;
+        const endpoint = `${API_BASE_URL}${postCategory.value === 'gallery' ? 'gallery-posts' : 'articles'}/${postIdInput.value}/`;
         try {
-            const response = await fetch(apiEndpoint, {
-                method: 'DELETE',
-                headers: window.getAuthHeaders(),
-            });
-
-            if (response.ok) {
-                alert('Excluído!');
-                window.location.href = 'admin.html';
-            }
-        } catch (error) {
-            alert('Erro ao excluir.');
-        }
+            const res = await fetch(endpoint, { method: 'DELETE', headers: window.getAuthHeaders() });
+            if (res.ok) window.location.href = 'site_arque.html';
+        } catch (e) { alert('Erro ao excluir'); }
     }
 });
