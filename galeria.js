@@ -70,9 +70,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             videos.forEach(video => {
                 const videoElement = document.createElement('div');
                 videoElement.className = 'instagram-single video-wrapper';
+                const secureVideoUrl = video.video_file.replace("http://", "https://");
                 videoElement.innerHTML = `
-                    <video controls class="gallery-video-item" style="width:100%; height:100%; object-fit:cover;">
-                        <source src="${video.video_file}" type="video/mp4">
+                    <video controls playsinline preload="metadata" class="gallery-video-item" style="width:100%; height:100%; object-fit:cover; background:#000;">
+                        <source src="${secureVideoUrl}" type="video/mp4">
                     </video>
                     <div class="video-title-tag">${video.titulo}</div>
                 `;
