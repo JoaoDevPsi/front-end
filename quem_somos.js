@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 curriculo: ["Psicólogo", "Pós-graduando"],
                 contato: "5571920004468",
                 imagem: "img/joao5.jpg",
-                especialidades: ["Crise Suicida", "Orientação Profissional", "Atendimento a crianças"],
+                especialidades: ["Crise Suicida", "Psicologia Infantil", "Atendimento a crianças"],
                 crp: '03/27523',
                 formacao: ["Graduação em Psicologia - EBMSP", "Pós-graduação em Andamento - Psicoterapia Analítica"],
                 bio: "Atuação voltada ao (re)conhecimento de si, cuidados com desejos de morte."
@@ -63,6 +63,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 crp: '03/18559',
                 formacao: ["Graduada pela Escola Bahiana de Medicina e Saúde Pública."],
                 bio: "Encantada com a profundidade e complexidade do ser humano..."
+            },
+            {
+                nome: 'Gabriel',
+                curriculo: ["Psicóloga", "Pós-graduada"],
+                contato: "5571920004468",
+                imagem: "img/gabriel.jpeg",
+                especialidades: ["Psicologia Analítica", "Compulsão Alimentar", "Depressão"],
+                crp: '03/18559',
+                formacao: ["Graduada pela Escola Bahiana de Medicina e Saúde Pública."],
+                bio: "'Sou humano: nada do que é humano me é estranho.' — Terêncio"
+            },
+            {
+                nome: 'Eliane Moraes',
+                curriculo: ["Psicóloga", "Pós-graduada"],
+                contato: "5571920004468",
+                imagem: "img/Eliane.jpeg",
+                especialidades: ["Psicologia Analítica", "Psicologia Infantil", "Depressão"],
+                crp: '03/13380',
+                formacao: ["Graduada em Psicologia pela FACED – Faculdade Divinópolis/MG. Pós-graduada em Psicologia Analítica pelo IJBA (Instituto Junguiano da Bahia). Pós-graduada em Filosofia para Psicólogos (Instituto Dédalus/CE). Pós-graduanda em Ciências da Religião (Instituto Dédalus/CE). "],
+                bio: "A Psicologia é, para mim, abrir-se às palavras e aos silêncios. Um espaço seguro onde se pode simplesmente ser — e isso basta para tornar-se inteiro. É abertura à esperança."
             }
         ];
 
