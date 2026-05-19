@@ -234,3 +234,45 @@ document.addEventListener('DOMContentLoaded', function() {
 
     init();
 });
+
+const allImages = Array.from(document.querySelectorAll('.photos-container img'));
+if (allImages.length > 0) {
+    let currentImgIdx = 0;
+    const lightboxHTML = `
+        <div id="clinicLightbox" class="lightbox">
+            <span class="lightbox-close">&times;</span>
+            <div class="lightbox-content-wrapper">
+                <img class="lightbox-content" id="lightboxImage">
+                <p class="lightbox-caption" id="lightboxCaption"></p>
+            </div>
+            <a class="lightbox-nav-btn lightbox-prev">&#10094;</a>
+            <a class="lightbox-nav-btn lightbox-next">&#10095;</a>
+        </div>`;
+    document.body.insertAdjacentHTML('beforeend', lightboxHTML);
+
+    const lb = document.getElementById('clinicLightbox');
+    const lbImg = document.getElementById('lightboxImage');
+    const lbCap = document.getElementById('lightboxCaption');
+
+    const updateLb = (idx) => {
+        currentImgIdx = idx;
+        lbImg.src = allImages[idx].src;
+        lbCap.textContent = allImages[idx].alt;
+    };
+
+    allImages.forEach((img, i) => {
+        img.addEventListener('click', () => {
+            updateLb(i);
+            lb.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+    });
+
+    document.querySelector('.lightbox-close').onclick = () => {
+        lb.classList.remove('active');
+        document.body.style.overflow = '';
+    };
+
+    document.querySelector('.lightbox-next').onclick = () => updateLb((currentImgIdx + 1) % allImages.length);
+    document.querySelector('.lightbox-prev').onclick = () => updateLb((currentImgIdx - 1 + allImages.length) % allImages.length);
+}
