@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 curriculo: ["Psicólogo", "Pós-graduando"],
                 contato: "5571920004468",
                 imagem: "img/joao5.jpg",
-                especialidades: ["Crise Suicida", "Psicologia Infantil", "Atendimento a crianças"],
+                especialidades: ["Crise Suicida", "Masculinos e Masculinidades", "Atendimento a crianças"],
                 crp: '03/27523',
                 formacao: ["Graduação em Psicologia - EBMSP", "Pós-graduação em Andamento - Psicoterapia Analítica"],
                 bio: "Atuação voltada ao (re)conhecimento de si, cuidados com desejos de morte."
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 curriculo: ["Psicóloga", "Pós-graduada"],
                 contato: "5571920004468",
                 imagem: "img/gabriel.jpeg",
-                especialidades: ["Psicologia Analítica", "Compulsão Alimentar", "Depressão"],
+                especialidades: ["Psicologia Analítica", "ArteTerapia", "Gênero e sexualidade"],
                 crp: '03/18559',
                 formacao: ["Graduada pela Escola Bahiana de Medicina e Saúde Pública."],
                 bio: "'Sou humano: nada do que é humano me é estranho.' — Terêncio"
