@@ -60,16 +60,16 @@ document.addEventListener('DOMContentLoaded', function() {
         //     formacao: ["Graduação em Psicologia - UNIFACS", "Especialização em Psicologia Hospitalar"],
         //     bio: "Atuo como psicóloga através da abordagem analítica de Carl G. Jung. Participei de grupos de estudo e pesquisa acerca da pós-modernidade, sendo meu maior foco, assim como respiração e meditação.</br>Acredito que o trabalho é um ato de amor próprio, de dividir e se dar conta junto com o outro. Não repreender a vida, mas lidar com ela e encontrar ferramentas dentro dela (e de si), é um instrumento vital para caminhar em qualquer direção."
         // },
-        {
-            nome: 'Julia Péret',
-            curriculo: ["Psicóloga", "Pós-graduada"],
-            contato: "5571920004468",
-            imagem: "img/juliaP.jpg",
-            especialidades: ["Arteterapia", "LGBTQIAP+"],
-            crp: '03/21052 ',
-            formacao: ["Possui graduação em Psicologia pela Escola Bahiana de Medicina e Saúde Pública. </br> Especialização em Arteterapia Junguiana pelo Instituto Junguiano da Bahia. </br> Mestra pelo Programa Multidisciplinar de Pós-Graduação em Cultura e Sociedade da Universidade Federal da Bahia (UFBA)."],
-            bio: "Pesquisa no campo psicológico dos Complexos Culturais, se debruçando sobre o sofrimento psíquico gerado pelo machismo, racismo e LGBTfobias estruturais. É integrante do Núcleo de Pesquisa e Extensão em Culturas, Gêneros e Sexualidades (NuCuS) e tem experiência na área de Psicologia Clínica, com ênfase em Saúde Mental, trabalhando com a abordagem Junguiana. "
-        },
+        // {
+        //     nome: 'Julia Péret',
+        //     curriculo: ["Psicóloga", "Pós-graduada"],
+        //     contato: "5571920004468",
+        //     imagem: "img/juliaP.jpg",
+        //     especialidades: ["Arteterapia", "LGBTQIAP+"],
+        //     crp: '03/21052 ',
+        //     formacao: ["Possui graduação em Psicologia pela Escola Bahiana de Medicina e Saúde Pública. </br> Especialização em Arteterapia Junguiana pelo Instituto Junguiano da Bahia. </br> Mestra pelo Programa Multidisciplinar de Pós-Graduação em Cultura e Sociedade da Universidade Federal da Bahia (UFBA)."],
+        //     bio: "Pesquisa no campo psicológico dos Complexos Culturais, se debruçando sobre o sofrimento psíquico gerado pelo machismo, racismo e LGBTfobias estruturais. É integrante do Núcleo de Pesquisa e Extensão em Culturas, Gêneros e Sexualidades (NuCuS) e tem experiência na área de Psicologia Clínica, com ênfase em Saúde Mental, trabalhando com a abordagem Junguiana. "
+        // },
         // {
         //     nome: 'Louise Rosado',
         //     curriculo: ["Psicóloga", "Pós-graduada"],
@@ -90,16 +90,16 @@ document.addEventListener('DOMContentLoaded', function() {
             formacao: ["Graduada pela Escola Bahiana de Medicina e Saúde Pública. </br> pós graduada em psicoterapia Analítica pela Clínica Psiquê."],
             bio: "Encantada com a profundidade e complexidade do ser humano, vejo na clínica, fundamentada nos conceitos Juguianos, a possibilidade de ajudar pessoas a viverem melhor. </br> Com experiência em compulsões alimentares e depressão, no fazer clínico busco aprofundar para compreender a origem dos sintomas, levando em conta a subjetividade do sujeito, para que seja possível transformar e elaborar o sofrimento. Atendo adolescentes e adultos."
         },
-        {
-            nome: 'Mayla Araújo',
-            curriculo: ["Psicóloga", "Pós-graduada"],
-            contato: "5571920004468",
-            imagem: "img/Mayla.jpg",
-            especialidades: ["Psicologia Analítica", "Preparação Mental"],
-            crp: '03/21052',
-            formacao: ["Graduada em Psicologia pela Escola Bahiana de Medicina e Saúde Pública.</br> pós-graduada em Abordagem Junguiana pelo IDE."],
-            bio: "Tenho uma profunda paixão pelo estudo do inconsciente, explorando as formas simbólicas que ele nos traz, acessíveis por meio da fala, dos sonhos e da arte, e que podem nos guiar no processo de individuação. Como afirmou Nise da Silveira: 'Todo mundo deve inventar alguma coisa; a criatividade reúne em si várias funções psicológicas importantes para a reestruturação da psique. O que cura, fundamentalmente, é o estímulo à criatividade. Ela é indestrutível. A criatividade está em toda parte.'"
-        }
+        // {
+        //     nome: 'Mayla Araújo',
+        //     curriculo: ["Psicóloga", "Pós-graduada"],
+        //     contato: "5571920004468",
+        //     imagem: "img/Mayla.jpg",
+        //     especialidades: ["Psicologia Analítica", "Preparação Mental"],
+        //     crp: '03/21052',
+        //     formacao: ["Graduada em Psicologia pela Escola Bahiana de Medicina e Saúde Pública.</br> pós-graduada em Abordagem Junguiana pelo IDE."],
+        //     bio: "Tenho uma profunda paixão pelo estudo do inconsciente, explorando as formas simbólicas que ele nos traz, acessíveis por meio da fala, dos sonhos e da arte, e que podem nos guiar no processo de individuação. Como afirmou Nise da Silveira: 'Todo mundo deve inventar alguma coisa; a criatividade reúne em si várias funções psicológicas importantes para a reestruturação da psique. O que cura, fundamentalmente, é o estímulo à criatividade. Ela é indestrutível. A criatividade está em toda parte.'"
+        // }
     ];
 
     let currentModal = null;
