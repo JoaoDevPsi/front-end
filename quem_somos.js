@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("Script atualizado carregado com sucesso!"); // Se não aparecer isso no console, é cache!
 
-    // 1. MENU MOBILE TOGGLE
     const menuToggle = document.querySelector('.menu-toggle');
     const navList = document.querySelector('.nav-list');
 
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 2. CONTROLE DO MODAL DE PERFIL (Apenas se o container existir na página)
+    // Proteção: O script não vai mais travar se o id "container" não existir na página.
     const container = document.getElementById('container');
     if (container) {
         const pessoas = [
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 especialidades: ["Psicologia Analítica","Ansiedade", "Depressão"],
                 crp: "27/21157",
                 formacao: ["formado pela Escola Bahiana de Medicina e Saúde Pública. </br> pós-graduado pelo Instituto Junguiano da Bahia"],
-                bio: "Membro fundador da Clínica Arquê. Sua prática é pautada por uma escuta profunda, respeitosa e simbólica, buscando acolher cada pessoa em sua singularidade..."
+                bio: "Membro fundador da Clínica Arquê. Sua prática é pautada por uma escuta profunda, respeitosa e simbólica..."
             },
             {
                 nome: 'Fernando Lopes',
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 imagem: "img/nando3.jpg",
                 especialidades: ["Psicoterapia Analítica", "Morte e morrer", "Suicidio"],
                 crp:'03/18814',
-                formacao: ["Psicólogo com formação pela Escola Bahiana de Medicina e Saúde Pública (EBMSP)..."],
+                formacao: ["Psicólogo com formação pela Escola Bahiana de Medicina e Saúde Pública (EBMSP)."],
                 bio: "Com uma escuta atenta e um olhar voltado ao processo de autoconhecimento..."
             },
             {
@@ -41,8 +41,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 imagem: "img/nadna3.jpg",
                 especialidades: ["Psicoterapia Analítica","Gênero", "Feminino"],
                 crp:'03/26711',
-                formacao: ["Formada pela Escola Bahiana de Medicina e Saúde Pública..."],
-                bio: "Apaixonada por arte, fotografia e literatura..."
+                formacao: ["Formada pela Escola Bahiana de Medicina e Saúde Pública."],
+                bio: "Apaixonada por arte, fotografia e literatura, traz a tais recursos como aliados em seus processos..."
             },
             {
                 nome: 'João Araújo',
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 especialidades: ["Crise Suicida", "Orientação Profissional", "Atendimento a crianças"],
                 crp: '03/27523',
                 formacao: ["Graduação em Psicologia - EBMSP", "Pós-graduação em Andamento - Psicoterapia Analítica"],
-                bio: "Atuação voltada ao (re)conhecimento de si, cuidados com desejos de morte..."
+                bio: "Atuação voltada ao (re)conhecimento de si, cuidados com desejos de morte."
             },
             {
                 nome: 'Julia Kammuller',
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 imagem: "img/JuliaK.jpg",
                 especialidades: ["Psicologia Analítica", "Compulsão Alimentar", "Depressão"],
                 crp: '03/18559',
-                formacao: ["Graduada pela Escola Bahiana de Medicina e Saúde Pública..."],
+                formacao: ["Graduada pela Escola Bahiana de Medicina e Saúde Pública."],
                 bio: "Encantada com a profundidade e complexidade do ser humano..."
             }
         ];
@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
         function createCard(person, index) {
             const card = document.createElement('div');
             card.classList.add('card');
+            
             card.innerHTML = `
                 <div class="card-img-container">
                     <img src="${person.imagem || 'img/padrao.jpg'}" alt="${person.nome}" class="foto-profissional" onerror="this.src='img/padrao.jpg'">
@@ -98,6 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function openModal(person) {
             closeModal();
+            
             const modal = document.createElement('div');
             modal.classList.add('modal-perfil');
             currentModal = modal;
@@ -127,6 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
             
             modal.querySelector('.fechar-modal').addEventListener('click', closeModal);
+            
             modal.querySelector('.botao-contato').addEventListener('click', () => {
                 window.open(`https://wa.me/${person.contato}?text=Olá ${person.nome}, gostaria de agendar uma consulta`, '_blank');
             });
@@ -146,7 +149,9 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.appendChild(modal);
             document.body.style.overflow = 'hidden';
             
-            setTimeout(() => { modal.classList.add('active'); }, 10);
+            setTimeout(() => {
+                modal.classList.add('active');
+            }, 10);
         }
 
         function updateModalContent(person) {
@@ -182,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 3. FUNCIONALIDADE DO LIGHTBOX DAS FOTOS DA CLÍNICA
+    // 3. FUNCIONALIDADE DO LIGHTBOX (Abre as fotos em tela cheia)
     const allImages = Array.from(document.querySelectorAll('.photos-container img'));
     if (allImages.length > 0) {
         let currentImgIdx = 0;
