@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 imagem: "img/joao5.jpg",
                 especialidades: ["Crise Suicida", "Masculinos e Masculinidades", "Atendimento a crianças"],
                 crp: '03/27523',
-                formacao: ["Graduação em Psicologia - EBMSP", "Pós-graduação em Andamento - Psicoterapia Analítica"],
+                formacao: ["Graduação em Psicologia - EBMSP", "Pós-graduação em Andamento - Psicoterapia Analítica", "Pós-graduado em psicologia Clinica", "Pós-graduando em TEA e neurodivergências"],
                 bio: "Atuação voltada ao (re)conhecimento de si, cuidados com desejos de morte."
             },
             {
