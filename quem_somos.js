@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const pessoas = [
             {
                 nome: 'Ricardo Mattos',
-                curriculo: ["Psicólogo", "Pós-graduado em Psicologia Analitica"],
+                curriculo: ["Psicólogo", "Pós-graduado", "Mestrando"],
                 contato: "5571920004468",
                 imagem: "img/ric3.jpg",
                 especialidades: ["Psicologia Analítica","Ansiedade", "Depressão"],
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             {
                 nome: 'Anna Beatriz',
-                curriculo: ["Psicóloga", "Pós-graduada"],
+                curriculo: ["Psicóloga", "Pós-graduamda", "Mestranda"],
                 contato: "5571920004468",
                 imagem: "img/anna.jpeg",
                 especialidades: ["Psicologia Analítica", "⁠Clinica racializada", "Arteterapia"],
