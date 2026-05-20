@@ -85,13 +85,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 bio: "A Psicologia é, para mim, abrir-se às palavras e aos silêncios. Um espaço seguro onde se pode simplesmente ser — e isso basta para tornar-se inteiro. É abertura à esperança."
             },
             {
-                nome: 'Anna Beatriz',
+                nome: 'Anna Beatriz Mendonça',
                 curriculo: ["Psicóloga", "Pós-graduamda", "Mestranda"],
                 contato: "5571920004468",
                 imagem: "img/anna.jpeg",
                 especialidades: ["Psicologia Analítica", "⁠Clinica racializada", "Arteterapia"],
                 crp: '03/35011',
-                formacao: ["Graduada em Psicologia pela FACED – Faculdade Divinópolis/MG. Pós-graduada em Psicologia Analítica pelo IJBA (Instituto Junguiano da Bahia). Pós-graduada em Filosofia para Psicólogos (Instituto Dédalus/CE). Pós-graduanda em Ciências da Religião (Instituto Dédalus/CE). "],
+                formacao: [" Psicóloga formada pela Escola Bahiana de Medicina e Saúde Pública (EBMSP). Mestranda em Psicologia e Intervenções em Saúde pela EBMSP."],
                 bio: "Como psicóloga junguiana penso em um espaço de escuta, corpo e transição. A clínica é uma trama com linhas sem começo nem fim, de encontrar-se com quem se é."
             }
         ];
