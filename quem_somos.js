@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             {
                 nome: 'Anna Beatriz Mendonça',
-                curriculo: ["Psicóloga", "Pós-graduamda", "Mestranda"],
+                curriculo: ["Psicóloga", "Mestranda"],
                 contato: "5571920004468",
                 imagem: "img/anna.jpeg",
                 especialidades: ["Psicologia Analítica", "⁠Clinica racializada", "Arteterapia"],
