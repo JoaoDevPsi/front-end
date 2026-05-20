@@ -65,12 +65,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 bio: "Encantada com a profundidade e complexidade do ser humano..."
             },
             {
-                nome: 'Gabriel',
-                curriculo: ["Psicóloga", "Pós-graduada"],
+                nome: 'Gabriel Kramer Menezes',
+                curriculo: ["Psicólogo", "Pós-graduando"],
                 contato: "5571920004468",
                 imagem: "img/gabriel.jpeg",
                 especialidades: ["Psicologia Analítica", "ArteTerapia", "Gênero e sexualidade"],
-                crp: '03/18559',
+                crp: '03/35347',
                 formacao: ["Graduada pela Escola Bahiana de Medicina e Saúde Pública."],
                 bio: "'Sou humano: nada do que é humano me é estranho.' — Terêncio"
             },
@@ -83,6 +83,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 crp: '03/13380',
                 formacao: ["Graduada em Psicologia pela FACED – Faculdade Divinópolis/MG. Pós-graduada em Psicologia Analítica pelo IJBA (Instituto Junguiano da Bahia). Pós-graduada em Filosofia para Psicólogos (Instituto Dédalus/CE). Pós-graduanda em Ciências da Religião (Instituto Dédalus/CE). "],
                 bio: "A Psicologia é, para mim, abrir-se às palavras e aos silêncios. Um espaço seguro onde se pode simplesmente ser — e isso basta para tornar-se inteiro. É abertura à esperança."
+            },
+            {
+                nome: 'Anna Beatriz',
+                curriculo: ["Psicóloga", "Pós-graduada"],
+                contato: "5571920004468",
+                imagem: "img/anna.jpeg",
+                especialidades: ["Psicologia Analítica", "⁠Clinica racializada", "Arteterapia"],
+                crp: '03/35011',
+                formacao: ["Graduada em Psicologia pela FACED – Faculdade Divinópolis/MG. Pós-graduada em Psicologia Analítica pelo IJBA (Instituto Junguiano da Bahia). Pós-graduada em Filosofia para Psicólogos (Instituto Dédalus/CE). Pós-graduanda em Ciências da Religião (Instituto Dédalus/CE). "],
+                bio: "Como psicóloga junguiana penso em um espaço de escuta, corpo e transição. A clínica é uma trama com linhas sem começo nem fim, de encontrar-se com quem se é."
             }
         ];
 
