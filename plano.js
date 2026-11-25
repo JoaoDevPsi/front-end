@@ -11,18 +11,20 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('current-year').textContent = new Date().getFullYear();
 });
 
-function alertar() {
+function alertar(event) {
     if (!confirm('Você será redirecionado da página, deseja continuar?')) {
-        event.preventDefault();
+        (event || window.event).preventDefault();
     }
 }
 
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (href.length < 2) return;
+        const target = document.querySelector(href);
+        if (!target) return;
         e.preventDefault();
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
-            behavior: 'smooth'
-        });
+        target.scrollIntoView({ behavior: 'smooth' });
     });
 });
 

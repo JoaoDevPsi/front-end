@@ -10,18 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function getArticlesFromAPI() {
         try {
-            const response = await fetch(`${window.API_BASE_URL}articles/`, {
-                method: 'GET',
-                headers: window.getAuthHeaders()
-            });
-
-            if (!response.ok) {
-                throw new Error(`Erro ao carregar artigos: ${response.status} ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            return data.results || [];
-
+            return await window.fetchAllPages(`${window.API_BASE_URL}articles/`);
         } catch (error) {
             console.error('Erro ao buscar artigos da API:', error);
             return [];
@@ -57,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
             adminBar.style.alignItems = 'center';
 
             adminBar.innerHTML = `
-                <span>Modo Admin (${isAdmin ? 'Admin' : 'Usuário'})</span>
+                <span>Modo Admin</span>
                 <div>
                     <button id="addArticleBtn" style="margin-right: 10px; background-color: #0c4c7d;">+ Novo Artigo</button>
                     <button id="logoutBtnArtigos" style="background-color: #dc3545;">Sair</button>
@@ -80,18 +69,21 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const esc = window.escapeHtml;
         allArtigos.forEach(artigo => {
             const card = document.createElement('a');
-            card.href = `artigos_conteudo.html?id=${artigo.id}`;
+            card.href = `artigos_conteudo.html?id=${encodeURIComponent(artigo.id)}`;
             card.classList.add('artigo-card');
 
-            const imageUrl = artigo.image_url;
+            const imageHtml = artigo.image_url
+                ? `<img src="${esc(artigo.image_url)}" alt="${esc(artigo.title)}" class="artigo-card-image">`
+                : '';
 
             card.innerHTML = `
-                <img src="${imageUrl}" alt="${artigo.title}" class="artigo-card-image">
+                ${imageHtml}
                 <div class="artigo-card-content">
-                    <h2 class="artigo-card-title">${artigo.title}</h2>
-                    <p class="artigo-card-excerpt">${artigo.excerpt}</p>
+                    <h2 class="artigo-card-title">${esc(artigo.title)}</h2>
+                    <p class="artigo-card-excerpt">${esc(artigo.excerpt)}</p>
                     <span class="artigo-card-readmore">Leia mais &rarr;</span>
                 </div>
             `;
@@ -125,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             adminBar.style.alignItems = 'center';
 
             adminBar.innerHTML = `
-                <span>Modo Admin (${isAdmin ? 'Admin' : 'Usuário'})</span>
+                <span>Modo Admin</span>
                 <div>
                     <button id="editArticleBtn" style="margin-right: 10px; background-color: #0c4c7d;">Editar Artigo</button>
                     <button id="logoutBtnArticleContent" style="background-color: #dc3545;">Sair</button>
@@ -137,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('editArticleBtn').addEventListener('click', () => {
                 const articleId = new URLSearchParams(window.location.search).get('id');
                 if (articleId) {
-                    window.location.href = `admin_editor.html?edit=${articleId}&category=article`;
+                    window.location.href = `admin_editor.html?edit=${encodeURIComponent(articleId)}&category=article`;
                 } else {
                     alert('Não foi possível identificar o artigo para edição.');
                 }
@@ -156,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch(`${window.API_BASE_URL}articles/${articleId}/`, {
+            const response = await fetch(`${window.API_BASE_URL}articles/${encodeURIComponent(articleId)}/`, {
                 method: 'GET',
                 headers: window.getAuthHeaders()
             });
@@ -173,14 +165,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
             document.getElementById('article-title-tab').textContent = `${artigo.title} - Arquê`;
             document.getElementById('article-main-title').textContent = artigo.title;
-            document.getElementById('article-main-image').src = artigo.image_url;
-            document.getElementById('article-main-image').alt = artigo.title;
+            const mainImage = document.getElementById('article-main-image');
+            if (artigo.image_url) {
+                mainImage.src = artigo.image_url;
+                mainImage.alt = artigo.title;
+            } else {
+                mainImage.style.display = 'none';
+            }
             document.getElementById('article-text-content').innerHTML = artigo.content;
 
         } catch (error) {
             console.error('Erro ao carregar conteúdo do artigo:', error);
             document.getElementById('article-main-title').textContent = 'Artigo não encontrado.';
-            document.getElementById('article-text-content').innerHTML = `<p style="color: red;">${error.message}. Por favor, retorne à <a href="artigos.html">página de artigos</a>.</p>`;
+            document.getElementById('article-text-content').innerHTML = `<p style="color: red;">${window.escapeHtml(error.message)} Por favor, retorne à <a href="artigos.html">página de artigos</a>.</p>`;
             document.getElementById('article-main-image').style.display = 'none';
             document.getElementById('article-title-tab').textContent = 'Artigo não encontrado';
         }

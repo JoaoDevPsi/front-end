@@ -50,16 +50,20 @@ document.addEventListener('DOMContentLoaded', async function() {
     const galleryContainer = document.getElementById('galleryContainer');
     if (galleryContainer) {
         try {
-            const [resGallery, resVideos] = await Promise.all([
-                fetch(`${window.API_BASE_URL}gallery-posts/`, { headers: window.getAuthHeaders() }),
-                fetch(`${window.API_BASE_URL}upload-video/`, { method: 'GET', headers: window.getAuthHeaders() })
+            const esc = window.escapeHtml;
+            const [posts, videos] = await Promise.all([
+                window.fetchAllPages(`${window.API_BASE_URL}gallery-posts/`).catch(err => {
+                    console.error('Erro ao buscar posts da galeria:', err);
+                    return [];
+                }),
+                fetch(`${window.API_BASE_URL}upload-video/`)
+                    .then(res => res.ok ? res.json() : [])
+                    .then(data => Array.isArray(data) ? data : (data.results || []))
+                    .catch(err => {
+                        console.error('Erro ao buscar vídeos:', err);
+                        return [];
+                    })
             ]);
-
-            const galleryData = resGallery.ok ? await resGallery.json() : { results: [] };
-            const videosData = resVideos.ok ? await resVideos.json() : [];
-
-            const posts = galleryData.results || galleryData;
-            const videos = Array.isArray(videosData) ? videosData : (videosData.results || []);
 
             galleryContainer.innerHTML = '';
 
@@ -67,64 +71,67 @@ document.addEventListener('DOMContentLoaded', async function() {
                 galleryContainer.innerHTML = '<p style="text-align: center; color: #555; grid-column: 1 / -1;">Nenhuma mídia disponível.</p>';
             }
 
+            const adminActions = (id, category) => isAdmin ? `
+                <div class="post-actions">
+                    ${category === 'gallery' ? `<button class="edit-post" data-id="${esc(id)}">✏️</button>` : ''}
+                    <button class="delete-post" data-id="${esc(id)}" data-category="${category}">🗑️</button>
+                </div>
+            ` : '';
+
+            const linkAttrs = (link) => link ? `href="${esc(link)}" target="_blank" rel="noopener"` : '';
+
             videos.forEach(video => {
                 const videoElement = document.createElement('div');
                 videoElement.className = 'instagram-single video-wrapper';
-                
+
                 videoElement.innerHTML = `
-                    <video controls playsinline preload="metadata" crossorigin="anonymous" class="gallery-video-item" style="width:100%; height:100%; object-fit:cover; background:#000;">
-                        <source src="${video.video_file}" type="video/mp4">
+                    <video controls playsinline preload="metadata" class="gallery-video-item" style="width:100%; height:100%; object-fit:cover; background:#000;">
+                        <source src="${esc(video.video_file)}">
                         Seu navegador não suporta vídeos.
                     </video>
-                    <div class="video-title-tag">${video.titulo}</div>
+                    <div class="video-title-tag">${esc(video.titulo)}</div>
+                    ${adminActions(video.id, 'video')}
                 `;
                 galleryContainer.appendChild(videoElement);
             });
 
             posts.forEach(post => {
-                let postElement = document.createElement('div');
+                const postElement = document.createElement('div');
+                postElement.setAttribute('data-id', post.id);
 
                 if (post.post_type === 'single' && post.image_main_url) {
                     postElement.className = 'instagram-single';
-                    postElement.setAttribute('data-id', post.id);
                     postElement.innerHTML = `
-                        <a href="${post.link || '#'}" target="_blank">
-                            <img src="${post.image_main_url}" alt="${post.alt_text || 'Imagem'}" loading="lazy">
+                        <a ${linkAttrs(post.link)}>
+                            <img src="${esc(post.image_main_url)}" alt="${esc(post.alt_text || 'Imagem')}" loading="lazy">
                         </a>
-                        ${isAdmin ? `
-                            <div class="post-actions">
-                                <button class="edit-post" data-id="${post.id}" data-category="gallery">✏️</button>
-                                <button class="delete-post" data-id="${post.id}" data-category="gallery">🗑️</button>
-                            </div>
-                        ` : ''}
+                        ${adminActions(post.id, 'gallery')}
                     `;
-                } else if (post.post_type === 'carousel') {
+                } else if (post.post_type === 'carousel' && post.images && post.images.length > 0) {
                     postElement.className = 'instagram-carousel-wrapper';
-                    postElement.setAttribute('data-id', post.id);
                     postElement.innerHTML = `
                         <div class="instagram-carousel">
                             <div class="carousel-content-wrapper">
                                 ${post.images.map((img, i) => `
                                     <div class="carousel-slide ${i === 0 ? 'active' : ''}">
-                                        <a href="${img.link || '#'}" target="_blank">
-                                            <img src="${img.image_url}" alt="${img.alt_text}" loading="lazy">
+                                        <a ${linkAttrs(img.link)}>
+                                            <img src="${esc(img.image_url)}" alt="${esc(img.alt_text || 'Imagem')}" loading="lazy">
                                         </a>
                                     </div>
                                 `).join('')}
                             </div>
-                            <button class="carousel-prev">❮</button>
-                            <button class="carousel-next">❯</button>
+                            ${post.images.length > 1 ? `
+                                <button class="carousel-prev">❮</button>
+                                <button class="carousel-next">❯</button>
+                            ` : ''}
                         </div>
-                        ${isAdmin ? `
-                            <div class="post-actions">
-                                <button class="edit-post" data-id="${post.id}" data-category="gallery">✏️</button>
-                                <button class="delete-post" data-id="${post.id}" data-category="gallery">🗑️</button>
-                            </div>
-                        ` : ''}
+                        ${adminActions(post.id, 'gallery')}
                     `;
+                } else {
+                    return; // post sem imagem: não exibe
                 }
 
-                if (postElement) galleryContainer.appendChild(postElement);
+                galleryContainer.appendChild(postElement);
             });
 
             initializeCarousels();
@@ -133,19 +140,31 @@ document.addEventListener('DOMContentLoaded', async function() {
                 document.querySelectorAll('.delete-post').forEach(btn => {
                     btn.addEventListener('click', async function() {
                         const id = this.dataset.id;
-                        if (confirm('Excluir este post permanentemente?')) {
-                            const res = await fetch(`${window.API_BASE_URL}gallery-posts/${id}/`, {
-                                method: 'DELETE',
-                                headers: window.getAuthHeaders()
-                            });
-                            if (res.ok) location.reload();
+                        const isVideo = this.dataset.category === 'video';
+                        if (!confirm(`Excluir este ${isVideo ? 'vídeo' : 'post'} permanentemente?`)) return;
+
+                        const url = isVideo
+                            ? `${window.API_BASE_URL}upload-video/${id}/`
+                            : `${window.API_BASE_URL}gallery-posts/${id}/`;
+                        try {
+                            const res = await fetch(url, { method: 'DELETE', headers: window.getAuthHeaders() });
+                            if (res.ok || res.status === 404) {
+                                location.reload();
+                            } else if (res.status === 401) {
+                                alert('Sua sessão expirou. Faça login novamente.');
+                                window.logout();
+                            } else {
+                                alert(`Erro ao excluir (${res.status}).`);
+                            }
+                        } catch (e) {
+                            alert('Falha de conexão ao excluir.');
                         }
                     });
                 });
 
                 document.querySelectorAll('.edit-post').forEach(btn => {
                     btn.addEventListener('click', function() {
-                        window.location.href = `admin_editor.html?edit=${this.dataset.id}&category=gallery`;
+                        window.location.href = `admin_editor.html?edit=${encodeURIComponent(this.dataset.id)}&category=gallery`;
                     });
                 });
             }

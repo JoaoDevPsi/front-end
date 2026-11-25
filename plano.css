@@ -172,7 +172,7 @@ main {
     background-color: #0c4c7d;
 }
 
-#passos_planos {
+.passos_planos {
     background-color: #f5f9fc;
     border-radius: 8px;
     padding: 30px;
@@ -231,7 +231,7 @@ main {
     background-color: #0c4c7d;
 }
 
-#passos_planos > div:last-child p {
+.passos_planos > div:last-child p {
     color: #666;
     font-size: 1rem;
     text-align: center;

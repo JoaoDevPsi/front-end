@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("Script atualizado carregado com sucesso!"); // Se não aparecer isso no console, é cache!
-
     const menuToggle = document.querySelector('.menu-toggle');
     const navList = document.querySelector('.nav-list');
 
@@ -20,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 imagem: "img/ric3.jpg",
                 especialidades: ["Psicologia Analítica","Ansiedade", "Depressão"],
                 crp: "27/21157",
-                formacao: ["formado pela Escola Bahiana de Medicina e Saúde Pública. </br> pós-graduado pelo Instituto Junguiano da Bahia"],
+                formacao: ["formado pela Escola Bahiana de Medicina e Saúde Pública. <br> pós-graduado pelo Instituto Junguiano da Bahia"],
                 bio: "Membro fundador da Clínica Arquê. Sua prática é pautada por uma escuta profunda, respeitosa e simbólica..."
             },
             {
@@ -94,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             card.innerHTML = `
                 <div class="card-img-container">
-                    <img src="${person.imagem || 'img/padrao.jpg'}" alt="${person.nome}" class="foto-profissional" onerror="this.src='img/padrao.jpg'">
+                    <img src="${person.imagem || 'img/logo2.jpg'}" alt="${person.nome}" class="foto-profissional" onerror="this.onerror=null; this.src='img/logo2.jpg'">
                 </div>
                 <div class="card-content">
                     <h2>${person.nome}</h2>
@@ -126,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="modal-conteudo">
                     <button class="fechar-modal">&times;</button>
                     <div class="modal-img-container">
-                        <img src="${person.imagem || 'img/padrao.jpg'}" alt="${person.nome}" class="modal-foto" onerror="this.src='img/padrao.jpg'">
+                        <img src="${person.imagem || 'img/logo2.jpg'}" alt="${person.nome}" class="modal-foto" onerror="this.onerror=null; this.src='img/logo2.jpg'">
                     </div>
                     <div class="modal-nav">
                         <button class="nav-btn prev-btn">‹</button>
@@ -175,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function updateModalContent(person) {
             if (!currentModal) return;
-            currentModal.querySelector('.modal-foto').src = person.imagem || 'img/padrao.jpg';
+            currentModal.querySelector('.modal-foto').src = person.imagem || 'img/logo2.jpg';
             currentModal.querySelector('.modal-nav h2').textContent = person.nome;
             currentModal.querySelector('.detalhes ul').innerHTML = (person.especialidades || ['Não informado']).map(e => `<li>${e}</li>`).join('');
             currentModal.querySelector('#modal-crp').textContent = person.crp || 'Não informado';
@@ -189,13 +187,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function closeModal() {
             if (currentModal) {
-                currentModal.classList.remove('active');
+                const modalToClose = currentModal;
+                currentModal = null;
+                modalToClose.classList.remove('active');
                 setTimeout(() => {
-                    if (currentModal && currentModal.parentNode) {
-                        document.body.removeChild(currentModal);
+                    if (modalToClose.parentNode) {
+                        modalToClose.parentNode.removeChild(modalToClose);
                     }
-                    currentModal = null;
-                    document.body.style.overflow = 'auto';
+                    if (!currentModal) {
+                        document.body.style.overflow = '';
+                    }
                 }, 300);
             }
         }

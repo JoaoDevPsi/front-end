@@ -188,7 +188,7 @@
 <body>
     <div class="admin-header">
         <h1>Painel Administrativo</h1>
-        <button id="logoutBtn" onclick="window.logout()">Sair</button>
+        <button id="logoutBtn">Sair</button>
     </div>
     
     <div class="container">
@@ -214,6 +214,7 @@
         <div class="actions">
             <button onclick="window.location.href='admin_editor.html?category=gallery'">+ Novo Post Galeria</button>
             <button onclick="window.location.href='admin_editor.html?category=article'">+ Novo Artigo</button>
+            <button onclick="window.location.href='admin_editor.html?category=video'">+ Novo Vídeo</button>
             <button onclick="window.location.href='galeria.html'">Ver Galeria</button>
             <button onclick="window.location.href='artigos.html'">Ver Artigos</button>
         </div>
@@ -229,11 +230,17 @@
             <div id="articlesList">
             </div>
         </div>
+
+        <div class="posts-section">
+            <h2>Vídeos</h2>
+            <div id="videosList">
+            </div>
+        </div>
     </div>
     <footer class="bg-gray-800 text-gray-300 py-8 px-4 sm:px-6 lg:px-8 rounded-t-lg shadow-lg">
     <div class="div max-w-7xl mx-auto">
         <div>
-            <img src="img/logo.jpg" alt="Logo da Clínica Arquê" class="h-12 mb-4 rounded-md">
+            <img src="img/logo2.jpg" alt="Logo da Clínica Arquê" class="h-12 mb-4 rounded-md">
             <p class="text-sm">&copy; <span id="current-year"></span> Clínica Arquê de Psicologia. Todos os direitos reservados.</p>
             <p class="text-xs mt-1">Sua saúde mental, nossa prioridade.</p>
         </div>
@@ -250,102 +257,80 @@
 
     <script src="auth_service.js"></script>
     <script>
+        document.getElementById('logoutBtn').addEventListener('click', window.logout);
 
-        if (!window.isAuthenticated()) { 
-            window.location.href = 'login.html';
-        }
-        
-        document.getElementById('logoutBtn').addEventListener('click', window.logout); 
-        
         document.addEventListener('DOMContentLoaded', async function() {
+            const loggedIn = await window.requireAuth();
+            if (!loggedIn) return;
+
+            const esc = window.escapeHtml;
             const galleryPostsList = document.getElementById('galleryPostsList');
             const articlesList = document.getElementById('articlesList');
+            const videosList = document.getElementById('videosList');
+
+            function renderTable(headers, rows) {
+                return `
+                    <table>
+                        <thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+                        <tbody>${rows.join('')}</tbody>
+                    </table>
+                `;
+            }
+
+            function deleteLink(id, category) {
+                return `<a href="#" class="delete-post-btn" data-id="${esc(id)}" data-category="${category}" style="color: red;">🗑️ Excluir</a>`;
+            }
 
             async function fetchAndRenderPosts() {
                 try {
-                    const galleryResponse = await fetch(`${window.API_BASE_URL}gallery-posts/`, { 
-                        method: 'GET',
-                        headers: window.getAuthHeaders() 
-                    });
-                    if (!galleryResponse.ok) throw new Error('Falha ao buscar posts da galeria.');
-                    const galleryData = await galleryResponse.json();
-                    const galleryPosts = galleryData.results || galleryData;
-
-                    const articlesResponse = await fetch(`${window.API_BASE_URL}articles/`, { 
-                        method: 'GET',
-                        headers: window.getAuthHeaders() 
-                    });
-                    if (!articlesResponse.ok) throw new Error('Falha ao buscar artigos.');
-                    const articlesData = await articlesResponse.json();
-                    const blogArticles = articlesData.results || articlesData;
+                    const [galleryPosts, blogArticles, videosResponse] = await Promise.all([
+                        window.fetchAllPages(`${window.API_BASE_URL}gallery-posts/`),
+                        window.fetchAllPages(`${window.API_BASE_URL}articles/`),
+                        fetch(`${window.API_BASE_URL}upload-video/`)
+                    ]);
+                    const videos = videosResponse.ok ? await videosResponse.json() : [];
 
                     document.getElementById('totalGalleryPosts').textContent = galleryPosts.length;
                     document.getElementById('singleGalleryPosts').textContent = galleryPosts.filter(p => p.post_type === 'single').length;
                     document.getElementById('carouselGalleryPosts').textContent = galleryPosts.filter(p => p.post_type === 'carousel').length;
                     document.getElementById('totalArticlePosts').textContent = blogArticles.length;
 
-                    if (galleryPosts.length === 0) {
-                        galleryPostsList.innerHTML = '<p>Nenhum post de galeria cadastrado ainda.</p>';
-                    } else {
-                        galleryPostsList.innerHTML = `
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Tipo</th>
-                                        <th>Criado em</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${galleryPosts.map(post => `
-                                        <tr>
-                                            <td>${post.id}</td>
-                                            <td>${post.post_type === 'single' ? 'Imagem Única' : 'Carrossel'}</td>
-                                            <td>${new Date(post.created_at).toLocaleString()}</td>
-                                            <td class="post-actions">
-                                                <a href="admin_editor.html?edit=${post.id}&category=gallery">✏️ Editar</a>
-                                                <a href="#" class="delete-post-btn" data-id="${post.id}" data-category="gallery" style="color: red;">🗑️ Excluir</a>
-                                            </td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        `;
-                    }
+                    galleryPostsList.innerHTML = galleryPosts.length === 0
+                        ? '<p>Nenhum post de galeria cadastrado ainda.</p>'
+                        : renderTable(['ID', 'Tipo', 'Criado em', 'Ações'], galleryPosts.map(post => `
+                            <tr>
+                                <td>${esc(post.id)}</td>
+                                <td>${post.post_type === 'single' ? 'Imagem Única' : 'Carrossel'}</td>
+                                <td>${new Date(post.created_at).toLocaleString('pt-BR')}</td>
+                                <td class="post-actions">
+                                    <a href="admin_editor.html?edit=${encodeURIComponent(post.id)}&category=gallery">✏️ Editar</a>
+                                    ${deleteLink(post.id, 'gallery')}
+                                </td>
+                            </tr>`));
 
-                    if (blogArticles.length === 0) {
-                        articlesList.innerHTML = '<p>Nenhum artigo publicado ainda.</p>';
-                    } else {
-                        articlesList.innerHTML = `
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Título</th>
-                                        <th>Criado em</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${blogArticles.map(article => `
-                                        <tr>
-                                            <td>${article.id}</td>
-                                            <td>${article.title}</td>
-                                            <td>${new Date(article.created_at).toLocaleString()}</td>
-                                            <td class="post-actions">
-                                                <a href="admin_editor.html?edit=${article.id}&category=article">✏️ Editar</a>
-                                                <a href="#" class="delete-post-btn" data-id="${article.id}" data-category="article" style="color: red;">🗑️ Excluir</a>
-                                            </td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        `;
-                    }
-                    
+                    articlesList.innerHTML = blogArticles.length === 0
+                        ? '<p>Nenhum artigo publicado ainda.</p>'
+                        : renderTable(['ID', 'Título', 'Criado em', 'Ações'], blogArticles.map(article => `
+                            <tr>
+                                <td>${esc(article.id)}</td>
+                                <td>${esc(article.title)}</td>
+                                <td>${new Date(article.created_at).toLocaleString('pt-BR')}</td>
+                                <td class="post-actions">
+                                    <a href="admin_editor.html?edit=${encodeURIComponent(article.id)}&category=article">✏️ Editar</a>
+                                    ${deleteLink(article.id, 'article')}
+                                </td>
+                            </tr>`));
+
+                    videosList.innerHTML = videos.length === 0
+                        ? '<p>Nenhum vídeo enviado ainda.</p>'
+                        : renderTable(['Título', 'Enviado em', 'Ações'], videos.map(video => `
+                            <tr>
+                                <td><a href="${esc(video.video_file)}" target="_blank" rel="noopener">${esc(video.titulo)}</a></td>
+                                <td>${video.criado_em ? new Date(video.criado_em).toLocaleString('pt-BR') : '-'}</td>
+                                <td class="post-actions">${deleteLink(video.id, 'video')}</td>
+                            </tr>`));
+
                     attachDeleteEventListeners();
-
                 } catch (error) {
                     console.error('Erro ao carregar dados do admin:', error);
                     galleryPostsList.innerHTML = '<p style="color: red;">Erro ao carregar posts da galeria. Verifique o console.</p>';
@@ -353,44 +338,49 @@
                 }
             }
 
+            const endpoints = {
+                gallery: id => `${window.API_BASE_URL}gallery-posts/${id}/`,
+                article: id => `${window.API_BASE_URL}articles/${id}/`,
+                video: id => `${window.API_BASE_URL}upload-video/${id}/`
+            };
+            const labels = { gallery: 'post de galeria', article: 'artigo', video: 'vídeo' };
+
             function attachDeleteEventListeners() {
                 document.querySelectorAll('.delete-post-btn').forEach(btn => {
                     btn.addEventListener('click', async function(e) {
                         e.preventDefault();
-                        const postId = this.getAttribute('data-id');
-                        const postCategory = this.getAttribute('data-category');
-                        if (!confirm(`Tem certeza que deseja excluir este ${postCategory === 'gallery' ? 'post de galeria' : 'artigo'} permanentemente do servidor?`)) {
+                        const postId = this.dataset.id;
+                        const category = this.dataset.category;
+                        if (!confirm(`Tem certeza que deseja excluir este ${labels[category]} permanentemente?`)) {
                             return;
                         }
-                        
-                        let apiEndpoint;
-                        if (postCategory === 'gallery') {
-                            apiEndpoint = `${window.API_BASE_URL}gallery-posts/${postId}/`;
-                        } else {
-                            apiEndpoint = `${window.API_BASE_URL}articles/${postId}/`;
+                        if (!(await window.isAuthenticated())) {
+                            alert('Sua sessão expirou. Faça login novamente.');
+                            window.logout();
+                            return;
                         }
 
                         try {
-                            const response = await fetch(apiEndpoint, {
+                            const response = await fetch(endpoints[category](postId), {
                                 method: 'DELETE',
                                 headers: window.getAuthHeaders(),
                             });
 
-                            if (!response.ok) {
-                                if (response.status === 401 || response.status === 403) {
-                                    alert('Não autorizado a excluir o post. Faça login novamente.');
-                                    window.logout();
-                                } else if (response.status === 404) {
-                                    alert('Post não encontrado no servidor.');
-                                } else {
-                                    throw new Error(`Erro ao excluir post: ${response.status} ${response.statusText}`);
-                                }
+                            if (response.status === 401 || response.status === 403) {
+                                alert('Não autorizado. Faça login novamente.');
+                                window.logout();
+                                return;
                             }
-
-                            alert(`${postCategory === 'gallery' ? 'Post de Galeria' : 'Artigo'} excluído com sucesso do back-end!`);
+                            if (response.status === 404) {
+                                alert('Item não encontrado no servidor (talvez já tenha sido excluído).');
+                            } else if (!response.ok) {
+                                throw new Error(`${response.status} ${response.statusText}`);
+                            } else {
+                                alert('Excluído com sucesso!');
+                            }
                             fetchAndRenderPosts();
                         } catch (error) {
-                                console.error('Erro na requisição DELETE:', error);
+                            console.error('Erro na requisição DELETE:', error);
                             alert(`Erro ao excluir: ${error.message}`);
                         }
                     });

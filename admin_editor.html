@@ -174,10 +174,9 @@
                 
                 <div id="singleImageSection" class="form-group">
                     <label for="singleImageUpload">Upload da Imagem Única</label>
+                    <img id="singleImagePreview" alt="Imagem atual" style="display: none; max-width: 200px; border-radius: 4px; margin: 8px 0;">
                     <input type="file" id="singleImageUpload" accept="image/*">
-                    <p style="font-size: 0.8em; color: #666;">Ou</p>
-                    <label for="imageUrl">URL da Imagem (alternativa)</label>
-                    <input type="url" id="imageUrl" placeholder="https://exemplo.com/imagem.jpg">
+                    <p style="font-size: 0.8em; color: #666;">Ao editar, deixe vazio para manter a imagem atual.</p>
                     <label for="imageAlt">Texto Alternativo</label>
                     <input type="text" id="imageAlt" placeholder="Descrição da imagem">
                     <label for="imageLink">Link (opcional)</label>
@@ -190,9 +189,6 @@
                     <div class="form-group">
                         <label for="newImageUpload">Upload da Nova Imagem</label>
                         <input type="file" id="newImageUpload" accept="image/*">
-                        <p style="font-size: 0.8em; color: #666;">Ou</p>
-                        <label for="newImageUrl">URL da Nova Imagem (alternativa)</label>
-                        <input type="url" id="newImageUrl" placeholder="https://exemplo.com/imagem.jpg">
                         <label for="newImageAlt">Texto Alternativo</label>
                         <input type="text" id="newImageAlt" placeholder="Descrição da imagem">
                         <label for="newImageLink">Link (opcional)</label>
@@ -217,9 +213,9 @@
                 </div>
                 <div class="form-group">
                     <label for="articleImageUpload">Imagem Principal do Artigo (Upload)</label>
+                    <img id="articleImagePreview" alt="Imagem atual" style="display: none; max-width: 200px; border-radius: 4px; margin: 8px 0;">
                     <input type="file" id="articleImageUpload" accept="image/*">
-                    <p style="font-size: 0.8em; color: #666;">Ou URL da Imagem Principal (alternativa)</p>
-                    <input type="url" id="articleImageUrl" placeholder="https://exemplo.com/imagem-artigo.jpg">
+                    <p style="font-size: 0.8em; color: #666;">Ao editar, deixe vazio para manter a imagem atual.</p>
                 </div>
             </div>
             
@@ -229,14 +225,10 @@
                     <input type="text" id="videoTitle" placeholder="Ex: Aula de Arqueologia - Parte 1">
                 </div>
                 <div class="form-group">
-                    <label for="videoDescription">Descrição/Resumo do Vídeo</label>
-                    <textarea id="videoDescription" rows="3" placeholder="Breve descrição sobre o conteúdo do vídeo..."></textarea>
-                </div>
-                <div class="form-group">
                     <label for="videoFileUpload">Upload do Arquivo de Vídeo</label>
-                    <input type="file" id="videoFileUpload" accept="video/*">
+                    <input type="file" id="videoFileUpload" accept="video/mp4,video/webm,video/quicktime,video/x-m4v,video/ogg">
                     <p style="font-size: 0.8em; color: #666; margin-top: 5px;">
-                        Formatos recomendados: MP4, WebM. Limite de tamanho conforme plano do Cloudinary.
+                        Formatos recomendados: MP4 (H.264) ou WebM. Tamanho máximo: 100 MB.
                     </p>
                 </div>
                 <div class="form-group">
@@ -249,7 +241,7 @@
             </div>
 
             <div class="form-group">
-                <button type="submit">Salvar Post</button>
+                <button type="submit" id="submitBtn">Salvar Post</button>
                 <button type="button" id="cancelBtn">Cancelar</button>
                 <button type="button" id="deleteBtn">Excluir Post</button>
             </div>
@@ -259,7 +251,7 @@
     <footer class="bg-gray-800 text-gray-300 py-8 px-4 sm:px-6 lg:px-8 rounded-t-lg shadow-lg">
         <div class="max-w-7xl mx-auto">
             <div>
-                <img src="img/logo.jpg" alt="Logo da Clínica Arquê" class="h-12 mb-4 rounded-md">
+                <img src="img/logo2.jpg" alt="Logo da Clínica Arquê" class="h-12 mb-4 rounded-md">
                 <p class="text-sm">&copy; <span id="current-year"></span> Clínica Arquê de Psicologia. Todos os direitos reservados.</p>
                 <p class="text-xs mt-1">Sua saúde mental, nossa prioridade.</p>
             </div>
@@ -276,9 +268,6 @@
     <script src="auth_service.js"></script> 
     <script src="admin_editor.js"></script> 
     <script>
-        if (!window.isAuthenticated()) {
-            window.location.href = 'login.html';
-        }
         document.getElementById('logoutBtn').addEventListener('click', window.logout);
     </script>
 </body>

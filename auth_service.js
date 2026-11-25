@@ -61,12 +61,20 @@ window.login = async function(username, password, rememberMe = false) {
     }
 };
 
+// Remove os tokens sem redirecionar (usado nas páginas públicas).
+window.clearAuth = function() {
+    const storage = window.getStorage();
+    storage.removeItem(window.TOKEN_KEY);
+    storage.removeItem(window.REFRESH_TOKEN_KEY);
+    localStorage.removeItem(window.AUTH_STORAGE_TYPE_KEY);
+};
+
 window.refreshAccessToken = async function() {
     const storage = window.getStorage();
     const refreshToken = storage.getItem(window.REFRESH_TOKEN_KEY);
-    
+
     if (!refreshToken) {
-        window.logout(); 
+        window.clearAuth();
         return false;
     }
 
@@ -81,18 +89,26 @@ window.refreshAccessToken = async function() {
 
         if (!response.ok) {
             console.warn('Falha ao renovar token. Refresh token inválido ou expirado.');
-            window.logout(); 
+            window.clearAuth();
             return false;
         }
 
         const data = await response.json();
-        storage.setItem(window.TOKEN_KEY, data.access); 
+        storage.setItem(window.TOKEN_KEY, data.access);
         return true;
     } catch (error) {
         console.error('Erro ao renovar token:', error);
-        window.logout();
         return false;
     }
+};
+
+// Garante login nas páginas administrativas; redireciona para login.html se não houver.
+window.requireAuth = async function() {
+    const ok = await window.isAuthenticated();
+    if (!ok) {
+        window.location.href = 'login.html';
+    }
+    return ok;
 };
 
 window.isAuthenticated = async function() {
@@ -124,10 +140,7 @@ window.getAccessToken = function() {
 };
 
 window.logout = function() {
-    const storage = window.getStorage();
-    storage.removeItem(window.TOKEN_KEY);
-    storage.removeItem(window.REFRESH_TOKEN_KEY);
-    localStorage.removeItem(window.AUTH_STORAGE_TYPE_KEY);
+    window.clearAuth();
     window.location.href = 'login.html';
 };
 
@@ -144,6 +157,35 @@ window.getAuthHeaders = function(isFormData = false) {
     }
 
     return headers; 
+};
+
+// Busca todas as páginas de um endpoint paginado do Django REST Framework.
+window.fetchAllPages = async function(endpoint) {
+    const results = [];
+    for (let page = 1; page <= 100; page++) {
+        const sep = endpoint.includes('?') ? '&' : '?';
+        const response = await fetch(`${endpoint}${sep}page=${page}`, { headers: window.getAuthHeaders() });
+        if (!response.ok) {
+            throw new Error(`Erro ${response.status} ao buscar ${endpoint}`);
+        }
+        const data = await response.json();
+        if (Array.isArray(data)) {
+            return data;
+        }
+        results.push(...(data.results || []));
+        if (!data.next) break;
+    }
+    return results;
+};
+
+// Escapa texto antes de inseri-lo em HTML.
+window.escapeHtml = function(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 };
 
 window.getMediaUrl = function(relativePath) {
