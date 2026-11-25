@@ -46,7 +46,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
+            const honeypot = document.getElementById('website');
             const formData = {
+                website: honeypot ? honeypot.value : '',
                 name: nome,
                 email: email,
                 phone: telefone,
@@ -56,9 +58,14 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 const response = await fetch(API_CONTACT_URL, {
                     method: 'POST',
-                    headers: window.getAuthHeaders(), 
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData),
                 });
+
+                if (response.status === 429) {
+                    alert('Você enviou muitas solicitações em pouco tempo. Tente novamente mais tarde ou fale conosco pelo WhatsApp.');
+                    return;
+                }
 
                 if (!response.ok) {
                     const errorData = await response.json();

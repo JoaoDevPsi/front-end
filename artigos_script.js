@@ -172,7 +172,14 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 mainImage.style.display = 'none';
             }
-            document.getElementById('article-text-content').innerHTML = artigo.content;
+            // O texto é exibido como texto puro (sem executar HTML); cada linha vira um parágrafo.
+            const paragrafos = String(artigo.content || '')
+                .replace(/\r\n/g, '\n')
+                .split(/\n+/)
+                .map(p => p.trim())
+                .filter(Boolean)
+                .map(p => `<p>${window.escapeHtml(p)}</p>`);
+            document.getElementById('article-text-content').innerHTML = paragrafos.join('');
 
         } catch (error) {
             console.error('Erro ao carregar conteúdo do artigo:', error);

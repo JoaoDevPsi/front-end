@@ -39,16 +39,36 @@ document.addEventListener('DOMContentLoaded', async function() {
     const progressBar = document.getElementById('uploadProgressBar');
     const progressContainer = document.getElementById('uploadProgressContainer');
 
+    const eventSection = document.getElementById('eventSection');
+    const eventFolderSelect = document.getElementById('eventFolder');
+    const newFolderGroup = document.getElementById('newFolderGroup');
+    const newFolderNameInput = document.getElementById('newFolderName');
+    const eventFilesInput = document.getElementById('eventFiles');
+    const eventFilesList = document.getElementById('eventFilesList');
+    const eventCaptionInput = document.getElementById('eventCaption');
+    const eventProgressContainer = document.getElementById('eventProgressContainer');
+    const eventProgressBar = document.getElementById('eventProgressBar');
+    const eventStatus = document.getElementById('eventStatus');
+
     const submitBtn = document.getElementById('submitBtn');
     const deleteBtn = document.getElementById('deleteBtn');
     const cancelBtn = document.getElementById('cancelBtn');
 
+    const NEW_FOLDER = '__nova__';
+    const MAX_IMAGE_SIZE = 15 * 1024 * 1024; // 15 MB (mesmo limite do backend)
+    const IMAGE_EXT = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+    const VIDEO_EXT = ['mp4', 'webm', 'mov', 'm4v', 'ogg'];
+
     // Cada item: { id (imagem já salva) | file (nova), previewUrl, alt_text, link }
     let carouselItems = [];
+    // Arquivos escolhidos para o evento: { file, previewUrl, erro }
+    let eventFiles = [];
 
     const urlParams = new URLSearchParams(window.location.search);
     const editPostId = urlParams.get('edit');
-    const categoryParam = urlParams.get('category');
+    // "gallery" era o nome antigo do post de imagem única
+    const categoryParam = urlParams.get('category') === 'gallery' ? 'single' : urlParams.get('category');
+    const folderParam = urlParams.get('folder');
 
     postCategory.addEventListener('change', togglePostCategory);
     postType.addEventListener('change', togglePostType);
@@ -57,23 +77,30 @@ document.addEventListener('DOMContentLoaded', async function() {
     deleteBtn.addEventListener('click', deleteCurrentPost);
     cancelBtn.addEventListener('click', () => window.location.href = 'admin.html');
     btnSalvarVideo.addEventListener('click', fazerUploadVideo);
+    eventFolderSelect.addEventListener('change', () => {
+        newFolderGroup.style.display = eventFolderSelect.value === NEW_FOLDER ? 'block' : 'none';
+        if (eventFolderSelect.value === NEW_FOLDER) newFolderNameInput.focus();
+    });
+    eventFilesInput.addEventListener('change', addEventFiles);
 
     singleImageUploadInput.addEventListener('change', () => showFilePreview(singleImageUploadInput, singleImagePreview));
     articleImageUploadInput.addEventListener('change', () => showFilePreview(articleImageUploadInput, articleImagePreview));
 
-    if (['gallery', 'article', 'video'].includes(categoryParam)) {
+    if (['event', 'single', 'carousel', 'article', 'video'].includes(categoryParam)) {
         postCategory.value = categoryParam;
     }
 
-    if (editPostId && (categoryParam === 'gallery' || categoryParam === 'article')) {
+    if (editPostId && (categoryParam === 'single' || categoryParam === 'article')) {
         postCategory.disabled = true; // não é possível trocar a categoria de um post existente
         deleteBtn.style.display = 'inline-block';
         togglePostCategory();
-        loadPostForEditing(editPostId, categoryParam);
+        loadPostForEditing(editPostId, categoryParam === 'article' ? 'article' : 'gallery');
     } else {
         deleteBtn.style.display = 'none';
         togglePostCategory();
     }
+
+    loadEventFolders();
 
     // ---------------- auxiliares ----------------
 
@@ -117,19 +144,254 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
+    function isGalleryCategory(category) {
+        return category === 'single' || category === 'carousel';
+    }
+
     function togglePostCategory() {
         const category = postCategory.value;
-        gallerySections.style.display = category === 'gallery' ? 'block' : 'none';
+        eventSection.style.display = category === 'event' ? 'block' : 'none';
+        gallerySections.style.display = isGalleryCategory(category) ? 'block' : 'none';
         articleSection.style.display = category === 'article' ? 'block' : 'none';
         videoSection.style.display = category === 'video' ? 'block' : 'none';
         // O vídeo tem botão próprio, com barra de progresso.
         submitBtn.style.display = category === 'video' ? 'none' : 'inline-block';
+        submitBtn.textContent = category === 'event' ? 'Publicar no evento' : 'Salvar Post';
 
         [articleTitleInput, articleExcerptInput, articleContentInput].forEach(el => {
             el.required = category === 'article';
         });
 
-        if (category === 'gallery') togglePostType();
+        if (isGalleryCategory(category)) {
+            postType.value = category;
+            togglePostType();
+        }
+    }
+
+    // ---------------- eventos (pastas) ----------------
+
+    async function loadEventFolders() {
+        try {
+            const res = await fetch(`${API_BASE_URL}event-folders/`);
+            if (!res.ok) throw new Error(await readError(res));
+            const folders = await res.json();
+            eventFolderSelect.innerHTML = '<option value="">Selecione a pasta...</option>' +
+                folders.map(f => `<option value="${f.id}" data-slug="${window.escapeHtml(f.slug)}">${window.escapeHtml(f.name)}</option>`).join('') +
+                `<option value="${NEW_FOLDER}">+ Criar nova pasta...</option>`;
+
+            if (folderParam) {
+                const match = folders.find(f => f.slug === folderParam || String(f.id) === folderParam);
+                if (match) eventFolderSelect.value = String(match.id);
+            }
+        } catch (error) {
+            console.error('Erro ao carregar pastas:', error);
+            eventFolderSelect.innerHTML = `<option value="">Erro ao carregar pastas</option><option value="${NEW_FOLDER}">+ Criar nova pasta...</option>`;
+        }
+    }
+
+    function fileExtension(name) {
+        return (name.split('.').pop() || '').toLowerCase();
+    }
+
+    function formatSize(bytes) {
+        return bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed(1)} MB` : `${Math.ceil(bytes / 1024)} KB`;
+    }
+
+    function addEventFiles() {
+        const rejected = [];
+        Array.from(eventFilesInput.files).forEach(file => {
+            const ext = fileExtension(file.name);
+            const isImage = IMAGE_EXT.includes(ext);
+            const isVideo = VIDEO_EXT.includes(ext);
+            if (!isImage && !isVideo) {
+                rejected.push(`${file.name}: formato não aceito`);
+            } else if (isImage && file.size > MAX_IMAGE_SIZE) {
+                rejected.push(`${file.name}: foto maior que 15 MB`);
+            } else if (isVideo && file.size > MAX_VIDEO_SIZE) {
+                rejected.push(`${file.name}: vídeo maior que 100 MB`);
+            } else {
+                eventFiles.push({ file, isVideo, previewUrl: isImage ? URL.createObjectURL(file) : null, erro: '' });
+            }
+        });
+        eventFilesInput.value = '';
+        renderEventFiles();
+        if (rejected.length) alert('Alguns arquivos não foram adicionados:\n' + rejected.join('\n'));
+    }
+
+    function renderEventFiles() {
+        eventFilesList.innerHTML = '';
+        eventFiles.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'event-file' + (item.erro ? ' erro' : '');
+
+            const thumb = item.previewUrl ? document.createElement('img') : document.createElement('div');
+            thumb.className = 'thumb';
+            if (item.previewUrl) {
+                thumb.src = item.previewUrl;
+                thumb.alt = '';
+            } else {
+                thumb.textContent = '🎬';
+            }
+
+            const name = document.createElement('div');
+            name.className = 'name';
+            name.textContent = `${item.file.name} (${formatSize(item.file.size)})`;
+            name.title = item.file.name;
+
+            const remove = document.createElement('button');
+            remove.type = 'button';
+            remove.className = 'remove-image';
+            remove.textContent = '×';
+            remove.setAttribute('aria-label', `Remover ${item.file.name}`);
+            remove.addEventListener('click', () => {
+                const [removed] = eventFiles.splice(index, 1);
+                if (removed.previewUrl) URL.revokeObjectURL(removed.previewUrl);
+                renderEventFiles();
+            });
+
+            div.append(thumb, name, remove);
+            if (item.erro) {
+                const erro = document.createElement('div');
+                erro.className = 'erro-msg';
+                erro.textContent = item.erro;
+                div.appendChild(erro);
+            }
+            eventFilesList.appendChild(div);
+        });
+    }
+
+    // Envia um FormData mostrando o progresso; resolve com { status, data }.
+    function uploadWithProgress(url, formData, onProgress) {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', url);
+            xhr.setRequestHeader('Authorization', `Bearer ${window.getAccessToken()}`);
+            xhr.upload.onprogress = (e) => {
+                if (e.lengthComputable && onProgress) onProgress(e.loaded, e.total);
+            };
+            xhr.onload = () => {
+                let data = null;
+                try { data = JSON.parse(xhr.responseText); } catch (e) { /* resposta não-JSON */ }
+                resolve({ status: xhr.status, data });
+            };
+            xhr.onerror = () => reject(new Error('Falha de conexão durante o envio.'));
+            xhr.send(formData);
+        });
+    }
+
+    function apiErrorMessage(status, data) {
+        if (status === 413) return 'Arquivo grande demais para o servidor.';
+        if (!data) return `Erro ${status}`;
+        if (data.detail) return data.detail;
+        if (data.message) return data.message;
+        return Object.values(data).flat().join(' ') || `Erro ${status}`;
+    }
+
+    async function ensureFolder() {
+        if (eventFolderSelect.value !== NEW_FOLDER) {
+            const option = eventFolderSelect.selectedOptions[0];
+            return { id: eventFolderSelect.value, slug: option ? option.dataset.slug : '' };
+        }
+        const res = await fetch(`${API_BASE_URL}event-folders/`, {
+            method: 'POST',
+            headers: window.getAuthHeaders(),
+            body: JSON.stringify({ name: newFolderNameInput.value.trim() })
+        });
+        if (!res.ok) throw new Error('Não foi possível criar a pasta: ' + await readError(res));
+        const folder = await res.json();
+        // A pasta passa a existir: atualiza a lista para não criar de novo
+        const option = new Option(folder.name, folder.id);
+        option.dataset.slug = folder.slug;
+        eventFolderSelect.add(option, eventFolderSelect.options.length - 1);
+        eventFolderSelect.value = String(folder.id);
+        newFolderGroup.style.display = 'none';
+        return { id: folder.id, slug: folder.slug };
+    }
+
+    async function saveEvent() {
+        if (!eventFolderSelect.value) {
+            alert('Selecione a pasta do evento.');
+            return;
+        }
+        if (eventFolderSelect.value === NEW_FOLDER && !newFolderNameInput.value.trim()) {
+            alert('Digite o nome da nova pasta.');
+            newFolderNameInput.focus();
+            return;
+        }
+        if (eventFiles.length === 0) {
+            alert('Selecione pelo menos uma foto ou vídeo.');
+            return;
+        }
+        if (!(await ensureSession())) return;
+
+        submitBtn.disabled = true;
+        eventStatus.style.color = '';
+        eventProgressContainer.style.display = 'block';
+        eventProgressBar.style.width = '0%';
+
+        let folder;
+        try {
+            folder = await ensureFolder();
+        } catch (error) {
+            eventStatus.style.color = 'red';
+            eventStatus.textContent = error.message;
+            eventProgressContainer.style.display = 'none';
+            submitBtn.disabled = false;
+            return;
+        }
+
+        const caption = eventCaptionInput.value.trim();
+        const totalBytes = eventFiles.reduce((sum, item) => sum + item.file.size, 0) || 1;
+        let doneBytes = 0;
+        const failed = [];
+
+        for (let i = 0; i < eventFiles.length; i++) {
+            const item = eventFiles[i];
+            eventStatus.textContent = `Enviando ${i + 1} de ${eventFiles.length}: ${item.file.name}`;
+
+            const fd = new FormData();
+            fd.append('folder', folder.id);
+            fd.append('caption', caption);
+            fd.append('file', item.file);
+
+            try {
+                const { status, data } = await uploadWithProgress(`${API_BASE_URL}event-media/`, fd, (loaded) => {
+                    eventProgressBar.style.width = `${Math.min(99, Math.round(((doneBytes + loaded) / totalBytes) * 100))}%`;
+                });
+                if (status === 401) {
+                    alert('Sua sessão expirou. Faça login novamente.');
+                    window.logout();
+                    return;
+                }
+                if (status === 201) {
+                    item.erro = '';
+                } else {
+                    item.erro = apiErrorMessage(status, data);
+                    failed.push(item);
+                }
+            } catch (error) {
+                item.erro = error.message;
+                failed.push(item);
+            }
+            doneBytes += item.file.size;
+            eventProgressBar.style.width = `${Math.round((doneBytes / totalBytes) * 100)}%`;
+        }
+
+        const enviados = eventFiles.length - failed.length;
+        eventFiles = failed; // mantém só os que falharam, para tentar de novo
+        renderEventFiles();
+        submitBtn.disabled = false;
+
+        if (failed.length === 0) {
+            eventStatus.style.color = 'green';
+            eventStatus.textContent = `${enviados} ${enviados === 1 ? 'arquivo enviado' : 'arquivos enviados'} com sucesso!`;
+            setTimeout(() => {
+                window.location.href = `galeria.html#pasta-${encodeURIComponent(folder.slug || '')}`;
+            }, 1200);
+        } else {
+            eventStatus.style.color = 'red';
+            eventStatus.textContent = `${enviados} enviado(s), ${failed.length} com erro. Veja os arquivos marcados em vermelho e clique em "Publicar no evento" para tentar de novo.`;
+        }
     }
 
     function togglePostType() {
@@ -203,7 +465,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             postIdInput.value = post.id;
 
             if (category === 'gallery') {
-                postType.value = post.post_type;
+                postCategory.value = post.post_type; // "single" ou "carousel"
+                togglePostCategory();
                 if (post.post_type === 'single') {
                     setPreview(singleImagePreview, post.image_main_url);
                     imageAltInput.value = post.alt_text || '';
@@ -306,11 +569,15 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     async function savePost(e) {
         e.preventDefault();
-        const category = postCategory.value;
-        if (category === 'video') {
+        if (postCategory.value === 'video') {
             fazerUploadVideo();
             return;
         }
+        if (postCategory.value === 'event') {
+            saveEvent();
+            return;
+        }
+        const category = isGalleryCategory(postCategory.value) ? 'gallery' : 'article';
 
         const isEdit = Boolean(postIdInput.value);
         const formData = new FormData();
@@ -384,7 +651,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (!confirm('Excluir permanentemente?')) return;
         if (!(await ensureSession())) return;
 
-        const endpoint = `${API_BASE_URL}${postCategory.value === 'gallery' ? 'gallery-posts' : 'articles'}/${postIdInput.value}/`;
+        const endpoint = `${API_BASE_URL}${isGalleryCategory(postCategory.value) ? 'gallery-posts' : 'articles'}/${postIdInput.value}/`;
         try {
             const res = await fetch(endpoint, { method: 'DELETE', headers: window.getAuthHeaders() });
             if (res.ok) {

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quem somos - Arquê</title>
     <link rel="stylesheet" href="qs_style.css">
+    <link rel="stylesheet" href="pastas.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -78,58 +79,45 @@
 
         <section class="gallery-section clinic-photos-section">
             <h2>Nosso Espaço</h2>
-            <div class="clinic-grid">
-                <div class="clinic-category">
-                    <h3>Recepção</h3>
-                    <div class="photos-container">
-                        <img src="img/Entrada1.jpg" alt="Foto da Recepção 1">
-                        <img src="img/Mesarec.jpg" alt="recepção 1">
-                    </div>
-                </div>
-
-                <div class="clinic-category">
-                    <h3>Corredor</h3>
-                    <div class="photos-container">
-                        <img src="img/corredor.jpg" alt="Foto do Corredor 1">
-                    </div>
-                </div>
-
-                <div class="clinic-category">
-                    <h3>Sala 1</h3>
-                    <div class="photos-container">
-                        <img src="img/porta1.jpg" alt="Foto da Sala 1 - 1">
-                        <img src="img/reuniao1.jpg" alt="mesa de reunião sala 1">
-                        <img src="img/biblioteca1.jpg" alt="biblioteca1">
-                        <img src="img/sala1teste.jpg" alt="psisala1">
-                        <img src="img/pacisala2.jpg" alt="pacisala2">
-                    </div>
-                </div>
-
-                <div class="clinic-category">
-                    <h3>Sala 2</h3>
-                    <div class="photos-container">
-                        <img src="img/porta2.jpg" alt="Foto da Sala 2 - 1">
-                        <img src="img/jogoareia2.jpg" alt="jogoareia2">
-                        <img src="img/miniaturas.jpg" alt="miniaturas">
-                        <!-- <img src="img/atendimento2.jpg" alt="atendimento2">
-                        <img src="img/psi2.jpg" alt="psi2"> -->
-                        <img src="img/cadsala2.jpeg" alt="paciente2">
-                    </div>
-                </div>
-
-                <div class="clinic-category">
-                    <h3>Sala 3</h3>
-                    <div class="photos-container">
-                        <img src="img/porta3.jpg" alt="Foto da Sala 3 - 1">
-                        <img src="img/estante3.jpg" alt="estante3">
-                        <img src="img/Sala32.jpg" alt="psi3">
-                        <img src="img/decsala3.jpg" alt="atendimento3">
-                    </div>
-                </div>
-            </div>
+            <p class="pastas-instrucao">Toque em uma pasta para ver todas as fotos do ambiente.</p>
+            <div class="pastas-grid" id="clinicFolders"></div>
         </section>
 
-    ]</main>
+        <!--
+            Fotos do espaço, separadas por pasta.
+            Para adicionar uma foto: coloque um <img> dentro da pasta.
+            A primeira foto de cada pasta é a capa.
+        -->
+        <template id="pastasClinica">
+            <div class="pasta" data-slug="recepcao" data-titulo="Recepção">
+                <img src="img/Entrada1.jpg" alt="Entrada da recepção">
+                <img src="img/Mesarec.jpg" alt="Mesa da recepção">
+            </div>
+            <div class="pasta" data-slug="corredor" data-titulo="Corredor">
+                <img src="img/corredor.jpg" alt="Corredor da clínica">
+            </div>
+            <div class="pasta" data-slug="sala-1" data-titulo="Sala 1">
+                <img src="img/porta1.jpg" alt="Porta da Sala 1">
+                <img src="img/reuniao1.jpg" alt="Mesa de reunião da Sala 1">
+                <img src="img/biblioteca1.jpg" alt="Biblioteca da Sala 1">
+                <img src="img/sala1teste.jpg" alt="Sala 1">
+                <img src="img/pacisala2.jpg" alt="Poltrona da Sala 1">
+            </div>
+            <div class="pasta" data-slug="sala-2" data-titulo="Sala 2">
+                <img src="img/porta2.jpg" alt="Porta da Sala 2">
+                <img src="img/jogoareia2.jpg" alt="Caixa de areia (sandplay) da Sala 2">
+                <img src="img/miniaturas.jpg" alt="Miniaturas do sandplay">
+                <img src="img/cadsala2.jpeg" alt="Poltrona da Sala 2">
+            </div>
+            <div class="pasta" data-slug="sala-3" data-titulo="Sala 3">
+                <img src="img/porta3.jpg" alt="Porta da Sala 3">
+                <img src="img/estante3.jpg" alt="Estante da Sala 3">
+                <img src="img/Sala32.jpg" alt="Sala 3">
+                <img src="img/decsala3.jpg" alt="Decoração da Sala 3">
+            </div>
+        </template>
+
+    </main>
 
 <footer class="bg-gray-800 text-gray-300 py-8 px-4 sm:px-6 lg:px-8 rounded-t-lg shadow-lg">
     <div class="div max-w-7xl mx-auto">
@@ -165,9 +153,7 @@
     document.getElementById('current-year').textContent = new Date().getFullYear();
 </script>
 
+    <script src="pastas.js"></script>
     <script src="quem_somos.js"></script>
-    <script>
-        document.getElementById('current-year').textContent = new Date().getFullYear();
-    </script>
 </body>
 </html>

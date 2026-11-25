@@ -1,5 +1,9 @@
-window.API_BASE_URL = 'https://joaodevpsi.pythonanywhere.com/api/';
-window.BASE_URL = 'https://joaodevpsi.pythonanywhere.com/';
+// Em desenvolvimento local (localhost) usa o backend local; no site publicado, o PythonAnywhere.
+(function() {
+    const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+    window.BASE_URL = isLocal ? 'http://127.0.0.1:8000/' : 'https://joaodevpsi.pythonanywhere.com/';
+    window.API_BASE_URL = `${window.BASE_URL}api/`;
+})();
 window.TOKEN_KEY = 'accessToken';
 window.REFRESH_TOKEN_KEY = 'refreshToken';
 window.AUTH_STORAGE_TYPE_KEY = 'authStorageType';

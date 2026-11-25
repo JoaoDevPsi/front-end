@@ -212,13 +212,21 @@
         </div>
         
         <div class="actions">
-            <button onclick="window.location.href='admin_editor.html?category=gallery'">+ Novo Post Galeria</button>
+            <button onclick="window.location.href='admin_editor.html?category=event'">+ Novo Evento</button>
+            <button onclick="window.location.href='admin_editor.html?category=single'">+ Novo Post</button>
+            <button onclick="window.location.href='admin_editor.html?category=carousel'">+ Novo Carrossel</button>
             <button onclick="window.location.href='admin_editor.html?category=article'">+ Novo Artigo</button>
             <button onclick="window.location.href='admin_editor.html?category=video'">+ Novo Vídeo</button>
             <button onclick="window.location.href='galeria.html'">Ver Galeria</button>
             <button onclick="window.location.href='artigos.html'">Ver Artigos</button>
         </div>
         
+        <div class="posts-section">
+            <h2>Eventos (pastas)</h2>
+            <div id="eventFoldersList">
+            </div>
+        </div>
+
         <div class="posts-section">
             <h2>Posts da Galeria</h2>
             <div id="galleryPostsList">
@@ -267,6 +275,34 @@
             const galleryPostsList = document.getElementById('galleryPostsList');
             const articlesList = document.getElementById('articlesList');
             const videosList = document.getElementById('videosList');
+            const eventFoldersList = document.getElementById('eventFoldersList');
+
+            async function renderEventFolders() {
+                try {
+                    const res = await fetch(`${window.API_BASE_URL}event-folders/`);
+                    if (!res.ok) throw new Error(`${res.status}`);
+                    const folders = await res.json();
+                    eventFoldersList.innerHTML = folders.length === 0
+                        ? '<p>Nenhuma pasta criada.</p>'
+                        : renderTable(['Pasta', 'Fotos', 'Vídeos', 'Ações'], folders.map(f => {
+                            const fotos = f.media.filter(m => m.media_type === 'image').length;
+                            const videos = f.media.length - fotos;
+                            return `
+                                <tr>
+                                    <td>${esc(f.name)}</td>
+                                    <td>${fotos}</td>
+                                    <td>${videos}</td>
+                                    <td class="post-actions">
+                                        <a href="admin_editor.html?category=event&folder=${encodeURIComponent(f.slug)}">➕ Adicionar</a>
+                                        <a href="galeria.html#pasta-${encodeURIComponent(f.slug)}">👁️ Ver / excluir itens</a>
+                                    </td>
+                                </tr>`;
+                        }));
+                } catch (error) {
+                    console.error('Erro ao carregar pastas de eventos:', error);
+                    eventFoldersList.innerHTML = '<p style="color: red;">Erro ao carregar as pastas de eventos.</p>';
+                }
+            }
 
             function renderTable(headers, rows) {
                 return `
@@ -388,6 +424,7 @@
             }
 
             fetchAndRenderPosts();
+            renderEventFolders();
         });
     </script>
 </body>

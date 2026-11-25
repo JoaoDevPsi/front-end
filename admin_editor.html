@@ -135,6 +135,83 @@
         footer a { color: white; text-decoration: none; }
         footer a:hover { color: #a0aec0; }
         footer img { border-radius: 0.375rem; }
+        .hint {
+            font-size: 0.8em;
+            color: #666;
+            margin: 6px 0 0;
+        }
+        .event-files {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .event-file {
+            position: relative;
+            border: 1px solid #e3e3e3;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #f7f9fb;
+            font-size: 0.75em;
+        }
+        .event-file .thumb {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #dfe8f0;
+            font-size: 2em;
+        }
+        .event-file .name {
+            padding: 4px 6px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .event-file.erro {
+            border-color: #e74c3c;
+        }
+        .event-file .erro-msg {
+            color: #c0392b;
+            padding: 0 6px 6px;
+            white-space: normal;
+        }
+        .event-file .remove-image {
+            top: 4px;
+            right: 4px;
+        }
+        .progress {
+            width: 100%;
+            background: #eee;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 10px;
+            background: #28a745;
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
+        .status {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        @media (max-width: 600px) {
+            .container {
+                margin: 0;
+                border-radius: 0;
+                padding: 16px;
+            }
+            #deleteBtn {
+                float: none;
+            }
+            .form-group button {
+                margin-bottom: 8px;
+            }
+        }
         .btn-save-video {
             background-color: #28a745;
             margin-top: 10px;
@@ -155,16 +232,46 @@
             <input type="hidden" id="postId">
             
             <div class="form-group">
-                <label for="postCategory">Categoria do Post</label>
+                <label for="postCategory">O que você quer publicar?</label>
                 <select id="postCategory" required>
-                    <option value="gallery">Galeria</option>
-                    <option value="article">Artigo</option>
+                    <option value="event">Evento (fotos/vídeos em uma pasta)</option>
+                    <option value="single">Post (imagem única)</option>
+                    <option value="carousel">Carrossel (várias imagens)</option>
                     <option value="video">Vídeo</option>
+                    <option value="article">Artigo</option>
                 </select>
             </div>
 
-            <div id="gallerySections">
+            <div id="eventSection" style="display: none;">
                 <div class="form-group">
+                    <label for="eventFolder">Pasta do evento</label>
+                    <select id="eventFolder">
+                        <option value="">Carregando pastas...</option>
+                    </select>
+                </div>
+                <div class="form-group" id="newFolderGroup" style="display: none;">
+                    <label for="newFolderName">Nome da nova pasta</label>
+                    <input type="text" id="newFolderName" maxlength="100" placeholder="Ex.: Roda de Conversa">
+                </div>
+                <div class="form-group">
+                    <label for="eventFiles">Fotos e/ou vídeos</label>
+                    <input type="file" id="eventFiles" multiple
+                           accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime,video/x-m4v,video/ogg">
+                    <p class="hint">Você pode selecionar vários arquivos de uma vez (e selecionar de novo para adicionar mais). Fotos até 15 MB, vídeos até 100 MB.</p>
+                    <div id="eventFilesList" class="event-files"></div>
+                </div>
+                <div class="form-group">
+                    <label for="eventCaption">Legenda (opcional, vale para todos os arquivos enviados agora)</label>
+                    <input type="text" id="eventCaption" maxlength="255" placeholder="Ex.: Palestra na Uninassau - setembro/2026">
+                </div>
+                <div id="eventProgressContainer" class="progress" style="display: none;">
+                    <div id="eventProgressBar" class="progress-bar"></div>
+                </div>
+                <div id="eventStatus" class="status"></div>
+            </div>
+
+            <div id="gallerySections">
+                <div class="form-group" hidden>
                     <label for="postType">Tipo de Post (Galeria)</label>
                     <select id="postType">
                         <option value="single">Imagem Única</option>

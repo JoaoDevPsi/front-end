@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Arquê - Eventos</title>
     <link rel="stylesheet" href="galeria.css">
+    <link rel="stylesheet" href="pastas.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="auth_service.js"></script>
 </head>
 <body>
@@ -36,32 +38,37 @@
         <h1>Clínica Arquê de Psicologia</h1>
     </div>
     <main>
-        <!-- <section class="gallery-section instagram-section">
-            <h2>Posts e Vídeos</h2>
-            <div class="instagram-grid" id="galleryContainer"></div>
-        </section> -->
-
         <section class="gallery-section events-photos-section">
             <h2>Eventos da Arquê</h2>
-            <div class="photos-container">
-                <div>
-                    <img src="img/AQsetembroamarelo1.jpg" alt="Palestra Setembro Amarelo">
-                    <p class="photo-caption">Palestra Setembro Amarelo</p>
-                </div>
-                <div>
-                    <img src="img/aqsetembroamarelo2.jpg" alt="Palestra Setembro Amarelo">
-                    <p class="photo-caption">Palestra Setembro Amarelo</p>
-                </div>
-                <div>
-                    <img src="img/aquninassau1.jpg" alt="Aula Uninassau">
-                    <p class="photo-caption">Aula Uninassau</p>
-                </div>
-                <div>
-                    <img src="img/aqanaclara1.jpg" alt="Palestra Arque Puer">
-                    <p class="photo-caption">Palestra Arque Puer</p>
-                </div>
+            <div class="pastas-grid" id="eventFolders">
+                <p class="pastas-vazio">Carregando eventos...</p>
             </div>
         </section>
+
+        <section class="gallery-section instagram-section" id="postsSection" hidden>
+            <h2>Posts e Vídeos</h2>
+            <div class="instagram-grid" id="galleryContainer"></div>
+        </section>
+
+        <!--
+            Fotos fixas de cada pasta (ficam junto com as enviadas pelo painel admin).
+            Para adicionar outra foto fixa: coloque um <img> dentro da pasta certa.
+            data-slug precisa ser igual ao da pasta no sistema.
+        -->
+        <template id="eventosFixos">
+            <div class="pasta" data-slug="setembro-amarelo" data-titulo="Setembro Amarelo">
+                <img src="img/AQsetembroamarelo1.jpg" alt="Palestra Setembro Amarelo" data-legenda="Palestra Setembro Amarelo">
+                <img src="img/aqsetembroamarelo2.jpg" alt="Palestra Setembro Amarelo" data-legenda="Palestra Setembro Amarelo">
+            </div>
+            <div class="pasta" data-slug="aulas-em-universidades" data-titulo="Aulas em Universidades">
+                <img src="img/aquninassau1.jpg" alt="Aula Uninassau" data-legenda="Aula Uninassau">
+            </div>
+            <div class="pasta" data-slug="palestras" data-titulo="Palestras">
+                <img src="img/aqanaclara1.jpg" alt="Palestra Arque Puer" data-legenda="Palestra Arque Puer">
+            </div>
+            <div class="pasta" data-slug="eventos-internos" data-titulo="Eventos Internos"></div>
+            <div class="pasta" data-slug="grupo-de-estudo" data-titulo="Grupo de Estudo"></div>
+        </template>
     </main>
     <footer class="bg-gray-800 text-gray-300 py-8 px-4 sm:px-6 lg:px-8 rounded-t-lg shadow-lg">
         <div class="div max-w-7xl mx-auto">
@@ -89,6 +96,7 @@
     </footer>
     <script>document.getElementById('current-year').textContent = new Date().getFullYear();</script>
     <a href="login.html" class="admin-btn">Admin</a>
+    <script src="pastas.js"></script>
     <script src="galeria.js"></script>
 </body>
 </html>

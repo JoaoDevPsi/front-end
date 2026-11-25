@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
+    const esc = window.escapeHtml;
+
     let isAdmin = false;
     if (window.isAuthenticated) {
         try {
@@ -20,37 +22,100 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     if (isAdmin) {
         const adminBar = document.createElement('div');
-        adminBar.style.position = 'fixed';
-        adminBar.style.top = '0';
-        adminBar.style.left = '0';
-        adminBar.style.right = '0';
-        adminBar.style.backgroundColor = '#3897f0';
-        adminBar.style.color = 'white';
-        adminBar.style.padding = '10px';
-        adminBar.style.zIndex = '1000';
-        adminBar.style.display = 'flex';
-        adminBar.style.justifyContent = 'space-between';
-        adminBar.style.alignItems = 'center';
-
+        adminBar.style.cssText = 'position:fixed; top:0; left:0; right:0; background:#3897f0; color:white; padding:10px; z-index:1000; display:flex; flex-wrap:wrap; gap:8px; justify-content:space-between; align-items:center;';
         adminBar.innerHTML = `
             <span>Modo Admin</span>
-            <div>
-                <button id="addPostBtn" style="margin-right: 10px; background-color: #0c4c7d; color: white; border: none; padding: 5px 10px; cursor: pointer;">+ Novo Post / Vídeo</button>
-                <button id="logoutBtnGaleria" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer;">Sair</button>
+            <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                <button id="addEventBtn" style="background-color:#0c4c7d; color:white; border:none; padding:5px 10px; cursor:pointer;">+ Novo Evento</button>
+                <button id="addPostBtn" style="background-color:#0c4c7d; color:white; border:none; padding:5px 10px; cursor:pointer;">+ Post / Vídeo</button>
+                <button id="logoutBtnGaleria" style="background-color:#dc3545; color:white; border:none; padding:5px 10px; cursor:pointer;">Sair</button>
             </div>
         `;
-
         document.body.prepend(adminBar);
         document.getElementById('logoutBtnGaleria').addEventListener('click', window.logout);
+        document.getElementById('addEventBtn').addEventListener('click', () => {
+            window.location.href = 'admin_editor.html?category=event';
+        });
         document.getElementById('addPostBtn').addEventListener('click', () => {
-            window.location.href = 'admin_editor.html';
+            window.location.href = 'admin_editor.html?category=single';
         });
     }
 
-    const galleryContainer = document.getElementById('galleryContainer');
-    if (galleryContainer) {
+    await Promise.all([carregarEventos(), carregarPosts()]);
+
+    // ------------------------------------------------------------------
+    // Pastas de eventos (fotos fixas do HTML + enviadas pelo painel admin)
+    // ------------------------------------------------------------------
+    async function carregarEventos() {
+        const container = document.getElementById('eventFolders');
+        if (!container || !window.Pastas) return;
+
+        const fixas = window.Pastas.lerTemplate(document.getElementById('eventosFixos'));
+
+        let daApi = [];
         try {
-            const esc = window.escapeHtml;
+            const res = await fetch(`${window.API_BASE_URL}event-folders/`);
+            if (res.ok) daApi = await res.json();
+        } catch (e) {
+            console.error('Erro ao buscar pastas de eventos:', e);
+        }
+
+        const pastas = daApi.map(p => {
+            const fixa = fixas.find(f => f.slug === p.slug);
+            return {
+                slug: p.slug,
+                titulo: p.name,
+                itens: [
+                    ...(p.media || []).map(m => ({
+                        id: m.id,
+                        tipo: m.media_type,
+                        src: m.url,
+                        legenda: m.caption || '',
+                        alt: m.caption || p.name,
+                        removivel: true
+                    })),
+                    ...(fixa ? fixa.itens : [])
+                ]
+            };
+        });
+        // Pastas fixas que (ainda) não existem no sistema continuam aparecendo
+        fixas.forEach(f => {
+            if (!pastas.some(p => p.slug === f.slug)) pastas.push(f);
+        });
+
+        window.Pastas.render(container, pastas, {
+            textoVazio: 'Em breve, fotos dos nossos eventos.',
+            mostrarVazias: isAdmin,
+            linkAdmin: isAdmin ? (p => `admin_editor.html?category=event&folder=${encodeURIComponent(p.slug)}`) : null,
+            aoExcluir: isAdmin ? excluirMidiaEvento : null
+        });
+        window.Pastas.abrirPeloEndereco();
+    }
+
+    async function excluirMidiaEvento(item) {
+        const res = await fetch(`${window.API_BASE_URL}event-media/${item.id}/`, {
+            method: 'DELETE',
+            headers: window.getAuthHeaders()
+        });
+        if (res.status === 401) {
+            alert('Sua sessão expirou. Faça login novamente.');
+            window.logout();
+            throw new Error('Sessão expirada.');
+        }
+        if (!res.ok && res.status !== 404) {
+            throw new Error(`Erro ao excluir (${res.status}).`);
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // Posts (imagem única / carrossel) e vídeos avulsos
+    // ------------------------------------------------------------------
+    async function carregarPosts() {
+        const galleryContainer = document.getElementById('galleryContainer');
+        const postsSection = document.getElementById('postsSection');
+        if (!galleryContainer) return;
+
+        try {
             const [posts, videos] = await Promise.all([
                 window.fetchAllPages(`${window.API_BASE_URL}gallery-posts/`).catch(err => {
                     console.error('Erro ao buscar posts da galeria:', err);
@@ -66,10 +131,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             ]);
 
             galleryContainer.innerHTML = '';
-
-            if (posts.length === 0 && videos.length === 0) {
-                galleryContainer.innerHTML = '<p style="text-align: center; color: #555; grid-column: 1 / -1;">Nenhuma mídia disponível.</p>';
-            }
+            if (postsSection) postsSection.hidden = posts.length === 0 && videos.length === 0;
 
             const adminActions = (id, category) => isAdmin ? `
                 <div class="post-actions">
@@ -83,7 +145,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             videos.forEach(video => {
                 const videoElement = document.createElement('div');
                 videoElement.className = 'instagram-single video-wrapper';
-
                 videoElement.innerHTML = `
                     <video controls playsinline preload="metadata" class="gallery-video-item" style="width:100%; height:100%; object-fit:cover; background:#000;">
                         <source src="${esc(video.video_file)}">
@@ -121,8 +182,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                                 `).join('')}
                             </div>
                             ${post.images.length > 1 ? `
-                                <button class="carousel-prev">❮</button>
-                                <button class="carousel-next">❯</button>
+                                <button class="carousel-prev" aria-label="Imagem anterior">❮</button>
+                                <button class="carousel-next" aria-label="Próxima imagem">❯</button>
                             ` : ''}
                         </div>
                         ${adminActions(post.id, 'gallery')}
@@ -168,10 +229,9 @@ document.addEventListener('DOMContentLoaded', async function() {
                     });
                 });
             }
-
         } catch (error) {
             console.error('Erro na galeria:', error);
-            galleryContainer.innerHTML = '<p style="color:red; text-align:center; grid-column:1/-1;">Erro ao carregar mídias.</p>';
+            if (postsSection) postsSection.hidden = true;
         }
     }
 
@@ -191,47 +251,5 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (next) next.addEventListener('click', () => showSlide(current + 1));
             if (prev) prev.addEventListener('click', () => showSlide(current - 1));
         });
-    }
-
-    const allImages = Array.from(document.querySelectorAll('.photos-container img'));
-    if (allImages.length > 0) {
-        let currentImgIdx = 0;
-        const lightboxHTML = `
-            <div id="clinicLightbox" class="lightbox">
-                <span class="lightbox-close">&times;</span>
-                <div class="lightbox-content-wrapper">
-                    <img class="lightbox-content" id="lightboxImage">
-                    <p class="lightbox-caption" id="lightboxCaption"></p>
-                </div>
-                <a class="lightbox-nav-btn lightbox-prev">&#10094;</a>
-                <a class="lightbox-nav-btn lightbox-next">&#10095;</a>
-            </div>`;
-        document.body.insertAdjacentHTML('beforeend', lightboxHTML);
-
-        const lb = document.getElementById('clinicLightbox');
-        const lbImg = document.getElementById('lightboxImage');
-        const lbCap = document.getElementById('lightboxCaption');
-
-        const updateLb = (idx) => {
-            currentImgIdx = idx;
-            lbImg.src = allImages[idx].src;
-            lbCap.textContent = allImages[idx].alt;
-        };
-
-        allImages.forEach((img, i) => {
-            img.addEventListener('click', () => {
-                updateLb(i);
-                lb.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            });
-        });
-
-        document.querySelector('.lightbox-close').onclick = () => {
-            lb.classList.remove('active');
-            document.body.style.overflow = '';
-        };
-
-        document.querySelector('.lightbox-next').onclick = () => updateLb((currentImgIdx + 1) % allImages.length);
-        document.querySelector('.lightbox-prev').onclick = () => updateLb((currentImgIdx - 1 + allImages.length) % allImages.length);
     }
 });

@@ -135,6 +135,12 @@
                     <textarea id="mensagem" class="form-textarea" placeholder="Alguma informação adicional?" autocomplete="off"></textarea>
                 </div>
                 
+                <!-- Campo armadilha contra robôs de spam: invisível para pessoas, não preencha -->
+                <div aria-hidden="true" style="position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden;">
+                    <label for="website">Não preencha este campo</label>
+                    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+                </div>
+
                 <button type="submit" class="submit-btn">Enviar solicitação</button>
             </form>
         </div>
