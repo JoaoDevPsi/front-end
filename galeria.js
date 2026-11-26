@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             <span>Modo Admin</span>
             <div style="display:flex; flex-wrap:wrap; gap:8px;">
                 <button id="addEventBtn" style="background-color:#0c4c7d; color:white; border:none; padding:5px 10px; cursor:pointer;">+ Novo Evento</button>
-                <button id="addPostBtn" style="background-color:#0c4c7d; color:white; border:none; padding:5px 10px; cursor:pointer;">+ Post / Vídeo</button>
+                <button id="addPostBtn" style="background-color:#0c4c7d; color:white; border:none; padding:5px 10px; cursor:pointer;">+ Vídeo</button>
                 <button id="logoutBtnGaleria" style="background-color:#dc3545; color:white; border:none; padding:5px 10px; cursor:pointer;">Sair</button>
             </div>
         `;
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             window.location.href = 'admin_editor.html?category=event';
         });
         document.getElementById('addPostBtn').addEventListener('click', () => {
-            window.location.href = 'admin_editor.html?category=single';
+            window.location.href = 'admin_editor.html?category=video';
         });
     }
 

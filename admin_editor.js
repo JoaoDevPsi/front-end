@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const articleImagePreview = document.getElementById('articleImagePreview');
 
     const videoTitleInput = document.getElementById('videoTitle');
+    const videoDestinationSelect = document.getElementById('videoDestination');
     const videoFileUploadInput = document.getElementById('videoFileUpload');
     const videoStatus = document.getElementById('videoStatus');
     const btnSalvarVideo = document.getElementById('btnSalvarVideo');
@@ -179,9 +180,16 @@ document.addEventListener('DOMContentLoaded', async function() {
                 folders.map(f => `<option value="${f.id}" data-slug="${window.escapeHtml(f.slug)}">${window.escapeHtml(f.name)}</option>`).join('') +
                 `<option value="${NEW_FOLDER}">+ Criar nova pasta...</option>`;
 
+            // Destino do vídeo: seção "Vídeos" ou uma pasta de evento
+            videoDestinationSelect.innerHTML = '<option value="">Seção "Vídeos" da página Eventos</option>' +
+                folders.map(f => `<option value="${f.id}" data-slug="${window.escapeHtml(f.slug)}">Pasta do evento: ${window.escapeHtml(f.name)}</option>`).join('');
+
             if (folderParam) {
                 const match = folders.find(f => f.slug === folderParam || String(f.id) === folderParam);
-                if (match) eventFolderSelect.value = String(match.id);
+                if (match) {
+                    eventFolderSelect.value = String(match.id);
+                    videoDestinationSelect.value = String(match.id);
+                }
             }
         } catch (error) {
             console.error('Erro ao carregar pastas:', error);
@@ -509,9 +517,24 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
         if (!(await ensureSession())) return;
 
+        // Sem pasta: vai para a seção "Vídeos". Com pasta: entra no evento, com o título como legenda.
+        const folderId = videoDestinationSelect.value;
+        const folderOption = videoDestinationSelect.selectedOptions[0];
+        const folderSlug = folderId && folderOption ? folderOption.dataset.slug : '';
+
         const fd = new FormData();
-        fd.append('titulo', titulo);
-        fd.append('video_file', file);
+        let uploadUrl;
+        if (folderId) {
+            fd.append('folder', folderId);
+            fd.append('caption', titulo);
+            fd.append('file', file);
+            uploadUrl = `${API_BASE_URL}event-media/`;
+        } else {
+            fd.append('titulo', titulo);
+            fd.append('video_file', file);
+            uploadUrl = `${API_BASE_URL}upload-video/`;
+        }
+        const destinoFinal = folderId ? `galeria.html#pasta-${encodeURIComponent(folderSlug)}` : 'galeria.html';
 
         btnSalvarVideo.disabled = true;
         progressContainer.style.display = 'block';
@@ -521,7 +544,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         // XMLHttpRequest permite acompanhar o progresso real do envio.
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', `${API_BASE_URL}upload-video/`);
+        xhr.open('POST', uploadUrl);
         xhr.setRequestHeader('Authorization', `Bearer ${window.getAccessToken()}`);
 
         xhr.upload.onprogress = (e) => {
@@ -537,7 +560,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 progressBar.style.width = '100%';
                 videoStatus.style.color = 'green';
                 videoStatus.innerText = 'Vídeo enviado com sucesso!';
-                setTimeout(() => window.location.href = 'galeria.html', 1500);
+                setTimeout(() => window.location.href = destinoFinal, 1500);
                 return;
             }
             if (xhr.status === 401) {
@@ -545,13 +568,9 @@ document.addEventListener('DOMContentLoaded', async function() {
                 window.logout();
                 return;
             }
-            let message = `Erro ${xhr.status}`;
-            try {
-                const data = JSON.parse(xhr.responseText);
-                message = data.message || data.detail || message;
-            } catch (e) { /* resposta não-JSON */ }
-            if (xhr.status === 413) message = 'Arquivo grande demais para o servidor.';
-            failVideo(message);
+            let data = null;
+            try { data = JSON.parse(xhr.responseText); } catch (e) { /* resposta não-JSON */ }
+            failVideo(apiErrorMessage(xhr.status, data));
         };
 
         xhr.onerror = () => failVideo('Falha de conexão durante o envio.');
